@@ -1,9 +1,18 @@
 include configure.mk
 
 PREFIX=/usr
+LLVM_INCLUDE=/usr/include/llvm-c-3.2
+
+CCTOOLS=original/cctools-839-ld64-134.9
 
 # Assembler and linker
-cc-tools:
-	cd original/cctools-839-ld64-134.9 && ./autogen.sh; ./configure --target=${TARGET} --prefix=${PREFIX} && make
+cctools:
+	cd ${CCTOOLS} && \
+		./autogen.sh; \
+		CFLAGS="-I${LLVM_INCLUDE}" CXXFLAGS="-I${LLVM_INCLUDE}" ./configure --target=${TARGET} --prefix=${PREFIX} && \
+		make
 
-.PHONY: cc-tools
+cctools-clean:
+	make clean -C ${CCTOOLS}
+
+.PHONY: cctools cctools-clean

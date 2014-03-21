@@ -14,5 +14,8 @@
 /original/cctools-*/m4
 /original/cctools-*/missing
 /original/cctools-*/ltmain.sh
+/original/cctools-*/**/*.o
+/original/cctools-*/**/*.lo
+/original/cctools-*/**/*.la
 
 
