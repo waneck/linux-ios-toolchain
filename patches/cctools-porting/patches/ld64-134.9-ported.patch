@@ -1,0 +1,1481 @@
+diff -Nur ld64/src/3rd/BlocksRuntime/Block.h ld64.new/src/3rd/BlocksRuntime/Block.h
+--- ld64/src/3rd/BlocksRuntime/Block.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/BlocksRuntime/Block.h	2012-12-13 16:01:28.428782400 +0800
+@@ -0,0 +1,59 @@
++/*
++ * Block.h
++ *
++ * Copyright 2008-2010 Apple, Inc. Permission is hereby granted, free of charge,
++ * to any person obtaining a copy of this software and associated documentation
++ * files (the "Software"), to deal in the Software without restriction,
++ * including without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, sublicense, and/or sell copies of the Software, and to permit
++ * persons to whom the Software is furnished to do so, subject to the following
++ * conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ *
++ */
++
++#ifndef _BLOCK_H_
++#define _BLOCK_H_
++
++#if !defined(BLOCK_EXPORT)
++#   if defined(__cplusplus)
++#       define BLOCK_EXPORT extern "C" 
++#   else
++#       define BLOCK_EXPORT extern
++#   endif
++#endif
++
++#if defined(__cplusplus)
++extern "C" {
++#endif
++
++/* Create a heap based copy of a Block or simply add a reference to an existing one.
++ * This must be paired with Block_release to recover memory, even when running
++ * under Objective-C Garbage Collection.
++ */
++BLOCK_EXPORT void *_Block_copy(const void *aBlock);
++
++/* Lose the reference, and if heap based and last reference, recover the memory. */
++BLOCK_EXPORT void _Block_release(const void *aBlock);
++
++#if defined(__cplusplus)
++}
++#endif
++
++/* Type correct macros. */
++
++#define Block_copy(...) ((__typeof(__VA_ARGS__))_Block_copy((const void *)(__VA_ARGS__)))
++#define Block_release(...) _Block_release((const void *)(__VA_ARGS__))
++
++
++#endif
+diff -Nur ld64/src/3rd/BlocksRuntime/Block_private.h ld64.new/src/3rd/BlocksRuntime/Block_private.h
+--- ld64/src/3rd/BlocksRuntime/Block_private.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/BlocksRuntime/Block_private.h	2012-12-13 16:01:28.429782401 +0800
+@@ -0,0 +1,179 @@
++/*
++ * Block_private.h
++ *
++ * Copyright 2008-2010 Apple, Inc. Permission is hereby granted, free of charge,
++ * to any person obtaining a copy of this software and associated documentation
++ * files (the "Software"), to deal in the Software without restriction,
++ * including without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, sublicense, and/or sell copies of the Software, and to permit
++ * persons to whom the Software is furnished to do so, subject to the following
++ * conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ *
++ */
++
++#ifndef _BLOCK_PRIVATE_H_
++#define _BLOCK_PRIVATE_H_
++
++#if !defined(BLOCK_EXPORT)
++#   if defined(__cplusplus)
++#       define BLOCK_EXPORT extern "C" 
++#   else
++#       define BLOCK_EXPORT extern
++#   endif
++#endif
++
++#ifndef _MSC_VER
++#include <stdbool.h>
++#else
++/* MSVC doesn't have <stdbool.h>. Compensate. */
++typedef char bool;
++#define true (bool)1
++#define false (bool)0
++#endif
++
++#if defined(__cplusplus)
++extern "C" {
++#endif
++
++
++enum {
++    BLOCK_REFCOUNT_MASK =     (0xffff),
++    BLOCK_NEEDS_FREE =        (1 << 24),
++    BLOCK_HAS_COPY_DISPOSE =  (1 << 25),
++    BLOCK_HAS_CTOR =          (1 << 26), /* Helpers have C++ code. */
++    BLOCK_IS_GC =             (1 << 27),
++    BLOCK_IS_GLOBAL =         (1 << 28),
++    BLOCK_HAS_DESCRIPTOR =    (1 << 29)
++};
++
++
++/* Revised new layout. */
++struct Block_descriptor {
++    unsigned long int reserved;
++    unsigned long int size;
++    void (*copy)(void *dst, void *src);
++    void (*dispose)(void *);
++};
++
++
++struct Block_layout {
++    void *isa;
++    int flags;
++    int reserved; 
++    void (*invoke)(void *, ...);
++    struct Block_descriptor *descriptor;
++    /* Imported variables. */
++};
++
++
++struct Block_byref {
++    void *isa;
++    struct Block_byref *forwarding;
++    int flags; /* refcount; */
++    int size;
++    void (*byref_keep)(struct Block_byref *dst, struct Block_byref *src);
++    void (*byref_destroy)(struct Block_byref *);
++    /* long shared[0]; */
++};
++
++
++struct Block_byref_header {
++    void *isa;
++    struct Block_byref *forwarding;
++    int flags;
++    int size;
++};
++
++
++/* Runtime support functions used by compiler when generating copy/dispose helpers. */
++
++enum {
++    /* See function implementation for a more complete description of these fields and combinations */
++    BLOCK_FIELD_IS_OBJECT   =  3,  /* id, NSObject, __attribute__((NSObject)), block, ... */
++    BLOCK_FIELD_IS_BLOCK    =  7,  /* a block variable */
++    BLOCK_FIELD_IS_BYREF    =  8,  /* the on stack structure holding the __block variable */
++    BLOCK_FIELD_IS_WEAK     = 16,  /* declared __weak, only used in byref copy helpers */
++    BLOCK_BYREF_CALLER      = 128  /* called from __block (byref) copy/dispose support routines. */
++};
++
++/* Runtime entry point called by compiler when assigning objects inside copy helper routines */
++BLOCK_EXPORT void _Block_object_assign(void *destAddr, const void *object, const int flags);
++    /* BLOCK_FIELD_IS_BYREF is only used from within block copy helpers */
++
++
++/* runtime entry point called by the compiler when disposing of objects inside dispose helper routine */
++BLOCK_EXPORT void _Block_object_dispose(const void *object, const int flags);
++
++
++
++/* Other support functions */
++
++/* Runtime entry to get total size of a closure */
++BLOCK_EXPORT unsigned long int Block_size(void *block_basic);
++
++
++
++/* the raw data space for runtime classes for blocks */
++/* class+meta used for stack, malloc, and collectable based blocks */
++BLOCK_EXPORT void * _NSConcreteStackBlock[32];
++BLOCK_EXPORT void * _NSConcreteMallocBlock[32];
++BLOCK_EXPORT void * _NSConcreteAutoBlock[32];
++BLOCK_EXPORT void * _NSConcreteFinalizingBlock[32];
++BLOCK_EXPORT void * _NSConcreteGlobalBlock[32];
++BLOCK_EXPORT void * _NSConcreteWeakBlockVariable[32];
++
++
++/* the intercept routines that must be used under GC */
++BLOCK_EXPORT void _Block_use_GC( void *(*alloc)(const unsigned long, const bool isOne, const bool isObject),
++                                  void (*setHasRefcount)(const void *, const bool),
++                                  void (*gc_assign_strong)(void *, void **),
++                                  void (*gc_assign_weak)(const void *, void *),
++                                  void (*gc_memmove)(void *, void *, unsigned long));
++
++/* earlier version, now simply transitional */
++BLOCK_EXPORT void _Block_use_GC5( void *(*alloc)(const unsigned long, const bool isOne, const bool isObject),
++                                  void (*setHasRefcount)(const void *, const bool),
++                                  void (*gc_assign_strong)(void *, void **),
++                                  void (*gc_assign_weak)(const void *, void *));
++
++BLOCK_EXPORT void _Block_use_RR( void (*retain)(const void *),
++                                 void (*release)(const void *));
++
++/* make a collectable GC heap based Block.  Not useful under non-GC. */
++BLOCK_EXPORT void *_Block_copy_collectable(const void *aBlock);
++
++/* thread-unsafe diagnostic */
++BLOCK_EXPORT const char *_Block_dump(const void *block);
++
++
++/* Obsolete */
++
++/* first layout */
++struct Block_basic {
++    void *isa;
++    int Block_flags;  /* int32_t */
++    int Block_size;  /* XXX should be packed into Block_flags */
++    void (*Block_invoke)(void *);
++    void (*Block_copy)(void *dst, void *src);  /* iff BLOCK_HAS_COPY_DISPOSE */
++    void (*Block_dispose)(void *);             /* iff BLOCK_HAS_COPY_DISPOSE */
++    /* long params[0];  // where const imports, __block storage references, etc. get laid down */
++};
++
++
++#if defined(__cplusplus)
++}
++#endif
++
++
++#endif /* _BLOCK_PRIVATE_H_ */
+diff -Nur ld64/src/3rd/BlocksRuntime/config.h ld64.new/src/3rd/BlocksRuntime/config.h
+--- ld64/src/3rd/BlocksRuntime/config.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/BlocksRuntime/config.h	2012-12-13 16:01:28.429782401 +0800
+@@ -0,0 +1,8 @@
++/* AUTOMATICALLY GENERATED -- DO NOT EDIT */
++
++#define HAVE_SYNC_BOOL_COMPARE_AND_SWAP_INT 1
++#define HAVE_SYNC_BOOL_COMPARE_AND_SWAP_LONG 1
++#define PROGRAM "libBlocksRuntime"
++#define VERSION "0.1"
++#define TARGET "linux"
++#define CFLAGS "-DBlocksRuntime_EXPORTS -fPIC -std=c99 -Wall -Wextra -W -pedantic -Wno-unused-parameter"
+diff -Nur ld64/src/3rd/BlocksRuntime/data.c ld64.new/src/3rd/BlocksRuntime/data.c
+--- ld64/src/3rd/BlocksRuntime/data.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/BlocksRuntime/data.c	2012-12-13 16:01:28.429782401 +0800
+@@ -0,0 +1,41 @@
++/*
++ * data.c
++ *
++ * Copyright 2008-2010 Apple, Inc. Permission is hereby granted, free of charge,
++ * to any person obtaining a copy of this software and associated documentation
++ * files (the "Software"), to deal in the Software without restriction,
++ * including without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, sublicense, and/or sell copies of the Software, and to permit
++ * persons to whom the Software is furnished to do so, subject to the following
++ * conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ *
++ */
++
++/********************
++NSBlock support
++
++We allocate space and export a symbol to be used as the Class for the on-stack and malloc'ed copies until ObjC arrives on the scene.  These data areas are set up by Foundation to link in as real classes post facto.
++
++We keep these in a separate file so that we can include the runtime code in test subprojects but not include the data so that compiled code that sees the data in libSystem doesn't get confused by a second copy.  Somehow these don't get unified in a common block.
++**********************/
++
++void * _NSConcreteStackBlock[32] = { 0 };
++void * _NSConcreteMallocBlock[32] = { 0 };
++void * _NSConcreteAutoBlock[32] = { 0 };
++void * _NSConcreteFinalizingBlock[32] = { 0 };
++void * _NSConcreteGlobalBlock[32] = { 0 };
++void * _NSConcreteWeakBlockVariable[32] = { 0 };
++
++void _Block_copy_error(void) {
++}
+diff -Nur ld64/src/3rd/BlocksRuntime/runtime.c ld64.new/src/3rd/BlocksRuntime/runtime.c
+--- ld64/src/3rd/BlocksRuntime/runtime.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/BlocksRuntime/runtime.c	2012-12-13 16:01:28.431782403 +0800
+@@ -0,0 +1,700 @@
++/*
++ * runtime.c
++ *
++ * Copyright 2008-2010 Apple, Inc. Permission is hereby granted, free of charge,
++ * to any person obtaining a copy of this software and associated documentation
++ * files (the "Software"), to deal in the Software without restriction,
++ * including without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, sublicense, and/or sell copies of the Software, and to permit
++ * persons to whom the Software is furnished to do so, subject to the following
++ * conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ *
++ */
++
++#include "Block_private.h"
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <stdint.h>
++
++#include "config.h"
++
++#ifdef HAVE_AVAILABILITY_MACROS_H
++#include <AvailabilityMacros.h>
++#endif /* HAVE_AVAILABILITY_MACROS_H */
++
++#ifdef HAVE_TARGET_CONDITIONALS_H
++#include <TargetConditionals.h>
++#endif /* HAVE_TARGET_CONDITIONALS_H */
++
++#if defined(HAVE_OSATOMIC_COMPARE_AND_SWAP_INT) && defined(HAVE_OSATOMIC_COMPARE_AND_SWAP_LONG)
++
++#ifdef HAVE_LIBKERN_OSATOMIC_H
++#include <libkern/OSAtomic.h>
++#endif /* HAVE_LIBKERN_OSATOMIC_H */
++
++#elif defined(__WIN32__) || defined(_WIN32)
++#define _CRT_SECURE_NO_WARNINGS 1
++#include <windows.h>
++
++static __inline bool OSAtomicCompareAndSwapLong(long oldl, long newl, long volatile *dst) {
++    /* fixme barrier is overkill -- see objc-os.h */
++    long original = InterlockedCompareExchange(dst, newl, oldl);
++    return (original == oldl);
++}
++
++static __inline bool OSAtomicCompareAndSwapInt(int oldi, int newi, int volatile *dst) {
++    /* fixme barrier is overkill -- see objc-os.h */
++    int original = InterlockedCompareExchange(dst, newi, oldi);
++    return (original == oldi);
++}
++
++/*
++ * Check to see if the GCC atomic built-ins are available.  If we're on
++ * a 64-bit system, make sure we have an 8-byte atomic function
++ * available.
++ *
++ */
++
++#elif defined(HAVE_SYNC_BOOL_COMPARE_AND_SWAP_INT) && defined(HAVE_SYNC_BOOL_COMPARE_AND_SWAP_LONG)
++
++static __inline bool OSAtomicCompareAndSwapLong(long oldl, long newl, long volatile *dst) {
++  return __sync_bool_compare_and_swap(dst, oldl, newl);
++}
++
++static __inline bool OSAtomicCompareAndSwapInt(int oldi, int newi, int volatile *dst) {
++  return __sync_bool_compare_and_swap(dst, oldi, newi);
++}
++
++#else
++#error unknown atomic compare-and-swap primitive
++#endif /* HAVE_OSATOMIC_COMPARE_AND_SWAP_INT && HAVE_OSATOMIC_COMPARE_AND_SWAP_LONG */
++
++
++/*
++ * Globals:
++ */
++
++static void *_Block_copy_class = _NSConcreteMallocBlock;
++static void *_Block_copy_finalizing_class = _NSConcreteMallocBlock;
++static int _Block_copy_flag = BLOCK_NEEDS_FREE;
++static int _Byref_flag_initial_value = BLOCK_NEEDS_FREE | 2;
++
++static const int WANTS_ONE = (1 << 16);
++
++static bool isGC = false;
++
++/*
++ * Internal Utilities:
++ */
++
++#if 0
++static unsigned long int latching_incr_long(unsigned long int *where) {
++    while (1) {
++        unsigned long int old_value = *(volatile unsigned long int *)where;
++        if ((old_value & BLOCK_REFCOUNT_MASK) == BLOCK_REFCOUNT_MASK) {
++            return BLOCK_REFCOUNT_MASK;
++        }
++        if (OSAtomicCompareAndSwapLong(old_value, old_value+1, (volatile long int *)where)) {
++            return old_value+1;
++        }
++    }
++}
++#endif /* if 0 */
++
++static int latching_incr_int(int *where) {
++    while (1) {
++        int old_value = *(volatile int *)where;
++        if ((old_value & BLOCK_REFCOUNT_MASK) == BLOCK_REFCOUNT_MASK) {
++            return BLOCK_REFCOUNT_MASK;
++        }
++        if (OSAtomicCompareAndSwapInt(old_value, old_value+1, (volatile int *)where)) {
++            return old_value+1;
++        }
++    }
++}
++
++#if 0
++static int latching_decr_long(unsigned long int *where) {
++    while (1) {
++        unsigned long int old_value = *(volatile int *)where;
++        if ((old_value & BLOCK_REFCOUNT_MASK) == BLOCK_REFCOUNT_MASK) {
++            return BLOCK_REFCOUNT_MASK;
++        }
++        if ((old_value & BLOCK_REFCOUNT_MASK) == 0) {
++            return 0;
++        }
++        if (OSAtomicCompareAndSwapLong(old_value, old_value-1, (volatile long int *)where)) {
++            return old_value-1;
++        }
++    }
++}
++#endif /* if 0 */
++
++static int latching_decr_int(int *where) {
++    while (1) {
++        int old_value = *(volatile int *)where;
++        if ((old_value & BLOCK_REFCOUNT_MASK) == BLOCK_REFCOUNT_MASK) {
++            return BLOCK_REFCOUNT_MASK;
++        }
++        if ((old_value & BLOCK_REFCOUNT_MASK) == 0) {
++            return 0;
++        }
++        if (OSAtomicCompareAndSwapInt(old_value, old_value-1, (volatile int *)where)) {
++            return old_value-1;
++        }
++    }
++}
++
++
++/*
++ * GC support stub routines:
++ */
++#if 0
++#pragma mark GC Support Routines
++#endif /* if 0 */
++
++
++static void *_Block_alloc_default(const unsigned long size, const bool initialCountIsOne, const bool isObject) {
++    return malloc(size);
++}
++
++static void _Block_assign_default(void *value, void **destptr) {
++    *destptr = value;
++}
++
++static void _Block_setHasRefcount_default(const void *ptr, const bool hasRefcount) {
++}
++
++static void _Block_do_nothing(const void *aBlock) { }
++
++static void _Block_retain_object_default(const void *ptr) {
++    if (!ptr) return;
++}
++
++static void _Block_release_object_default(const void *ptr) {
++    if (!ptr) return;
++}
++
++static void _Block_assign_weak_default(const void *ptr, void *dest) {
++    *(void **)dest = (void *)ptr;
++}
++
++static void _Block_memmove_default(void *dst, void *src, unsigned long size) {
++    memmove(dst, src, (size_t)size);
++}
++
++static void _Block_memmove_gc_broken(void *dest, void *src, unsigned long size) {
++    void **destp = (void **)dest;
++    void **srcp = (void **)src;
++    while (size) {
++        _Block_assign_default(*srcp, destp);
++        destp++;
++        srcp++;
++        size -= sizeof(void *);
++    }
++}
++
++/*
++ * GC support callout functions - initially set to stub routines:
++ */
++
++static void *(*_Block_allocator)(const unsigned long, const bool isOne, const bool isObject) = _Block_alloc_default;
++static void (*_Block_deallocator)(const void *) = (void (*)(const void *))free;
++static void (*_Block_assign)(void *value, void **destptr) = _Block_assign_default;
++static void (*_Block_setHasRefcount)(const void *ptr, const bool hasRefcount) = _Block_setHasRefcount_default;
++static void (*_Block_retain_object)(const void *ptr) = _Block_retain_object_default;
++static void (*_Block_release_object)(const void *ptr) = _Block_release_object_default;
++static void (*_Block_assign_weak)(const void *dest, void *ptr) = _Block_assign_weak_default;
++static void (*_Block_memmove)(void *dest, void *src, unsigned long size) = _Block_memmove_default;
++
++
++/*
++ * GC support SPI functions - called from ObjC runtime and CoreFoundation:
++ */
++
++/* Public SPI
++ * Called from objc-auto to turn on GC.
++ * version 3, 4 arg, but changed 1st arg
++ */
++void _Block_use_GC( void *(*alloc)(const unsigned long, const bool isOne, const bool isObject),
++                    void (*setHasRefcount)(const void *, const bool),
++                    void (*gc_assign)(void *, void **),
++                    void (*gc_assign_weak)(const void *, void *),
++                    void (*gc_memmove)(void *, void *, unsigned long)) {
++
++    isGC = true;
++    _Block_allocator = alloc;
++    _Block_deallocator = _Block_do_nothing;
++    _Block_assign = gc_assign;
++    _Block_copy_flag = BLOCK_IS_GC;
++    _Block_copy_class = _NSConcreteAutoBlock;
++    /* blocks with ctors & dtors need to have the dtor run from a class with a finalizer */
++    _Block_copy_finalizing_class = _NSConcreteFinalizingBlock;
++    _Block_setHasRefcount = setHasRefcount;
++    _Byref_flag_initial_value = BLOCK_IS_GC;   // no refcount
++    _Block_retain_object = _Block_do_nothing;
++    _Block_release_object = _Block_do_nothing;
++    _Block_assign_weak = gc_assign_weak;
++    _Block_memmove = gc_memmove;
++}
++
++/* transitional */
++void _Block_use_GC5( void *(*alloc)(const unsigned long, const bool isOne, const bool isObject),
++                    void (*setHasRefcount)(const void *, const bool),
++                    void (*gc_assign)(void *, void **),
++                    void (*gc_assign_weak)(const void *, void *)) {
++    /* until objc calls _Block_use_GC it will call us; supply a broken internal memmove implementation until then */
++    _Block_use_GC(alloc, setHasRefcount, gc_assign, gc_assign_weak, _Block_memmove_gc_broken);
++}
++
++ 
++/*
++ * Called from objc-auto to alternatively turn on retain/release.
++ * Prior to this the only "object" support we can provide is for those
++ * super special objects that live in libSystem, namely dispatch queues.
++ * Blocks and Block_byrefs have their own special entry points.
++ *
++ */
++void _Block_use_RR( void (*retain)(const void *),
++                    void (*release)(const void *)) {
++    _Block_retain_object = retain;
++    _Block_release_object = release;
++}
++
++/*
++ * Internal Support routines for copying:
++ */
++
++#if 0
++#pragma mark Copy/Release support
++#endif /* if 0 */
++
++/* Copy, or bump refcount, of a block.  If really copying, call the copy helper if present. */
++static void *_Block_copy_internal(const void *arg, const int flags) {
++    struct Block_layout *aBlock;
++    const bool wantsOne = (WANTS_ONE & flags) == WANTS_ONE;
++
++    //printf("_Block_copy_internal(%p, %x)\n", arg, flags);	
++    if (!arg) return NULL;
++    
++    
++    // The following would be better done as a switch statement
++    aBlock = (struct Block_layout *)arg;
++    if (aBlock->flags & BLOCK_NEEDS_FREE) {
++        // latches on high
++        latching_incr_int(&aBlock->flags);
++        return aBlock;
++    }
++    else if (aBlock->flags & BLOCK_IS_GC) {
++        // GC refcounting is expensive so do most refcounting here.
++        if (wantsOne && ((latching_incr_int(&aBlock->flags) & BLOCK_REFCOUNT_MASK) == 1)) {
++            // Tell collector to hang on this - it will bump the GC refcount version
++            _Block_setHasRefcount(aBlock, true);
++        }
++        return aBlock;
++    }
++    else if (aBlock->flags & BLOCK_IS_GLOBAL) {
++        return aBlock;
++    }
++
++    // Its a stack block.  Make a copy.
++    if (!isGC) {
++        struct Block_layout *result = malloc(aBlock->descriptor->size);
++        if (!result) return (void *)0;
++        memmove(result, aBlock, aBlock->descriptor->size); // bitcopy first
++        // reset refcount
++        result->flags &= ~(BLOCK_REFCOUNT_MASK);    // XXX not needed
++        result->flags |= BLOCK_NEEDS_FREE | 1;
++        result->isa = _NSConcreteMallocBlock;
++        if (result->flags & BLOCK_HAS_COPY_DISPOSE) {
++            //printf("calling block copy helper %p(%p, %p)...\n", aBlock->descriptor->copy, result, aBlock);
++            (*aBlock->descriptor->copy)(result, aBlock); // do fixup
++        }
++        return result;
++    }
++    else {
++        // Under GC want allocation with refcount 1 so we ask for "true" if wantsOne
++        // This allows the copy helper routines to make non-refcounted block copies under GC
++        unsigned long int flags = aBlock->flags;
++        bool hasCTOR = (flags & BLOCK_HAS_CTOR) != 0;
++        struct Block_layout *result = _Block_allocator(aBlock->descriptor->size, wantsOne, hasCTOR);
++        if (!result) return (void *)0;
++        memmove(result, aBlock, aBlock->descriptor->size); // bitcopy first
++        // reset refcount
++        // if we copy a malloc block to a GC block then we need to clear NEEDS_FREE.
++        flags &= ~(BLOCK_NEEDS_FREE|BLOCK_REFCOUNT_MASK);   // XXX not needed
++        if (wantsOne)
++            flags |= BLOCK_IS_GC | 1;
++        else
++            flags |= BLOCK_IS_GC;
++        result->flags = flags;
++        if (flags & BLOCK_HAS_COPY_DISPOSE) {
++            //printf("calling block copy helper...\n");
++            (*aBlock->descriptor->copy)(result, aBlock); // do fixup
++        }
++        if (hasCTOR) {
++            result->isa = _NSConcreteFinalizingBlock;
++        }
++        else {
++            result->isa = _NSConcreteAutoBlock;
++        }
++        return result;
++    }
++}
++
++
++/*
++ * Runtime entry points for maintaining the sharing knowledge of byref data blocks.
++ *
++ * A closure has been copied and its fixup routine is asking us to fix up the reference to the shared byref data
++ * Closures that aren't copied must still work, so everyone always accesses variables after dereferencing the forwarding ptr.
++ * We ask if the byref pointer that we know about has already been copied to the heap, and if so, increment it.
++ * Otherwise we need to copy it and update the stack forwarding pointer
++ * XXX We need to account for weak/nonretained read-write barriers.
++ */
++
++static void _Block_byref_assign_copy(void *dest, const void *arg, const int flags) {
++    struct Block_byref **destp = (struct Block_byref **)dest;
++    struct Block_byref *src = (struct Block_byref *)arg;
++        
++    //printf("_Block_byref_assign_copy called, byref destp %p, src %p, flags %x\n", destp, src, flags);
++    //printf("src dump: %s\n", _Block_byref_dump(src));
++    if (src->forwarding->flags & BLOCK_IS_GC) {
++        ;   // don't need to do any more work
++    }
++    else if ((src->forwarding->flags & BLOCK_REFCOUNT_MASK) == 0) {
++        //printf("making copy\n");
++        // src points to stack
++        bool isWeak = ((flags & (BLOCK_FIELD_IS_BYREF|BLOCK_FIELD_IS_WEAK)) == (BLOCK_FIELD_IS_BYREF|BLOCK_FIELD_IS_WEAK));
++        // if its weak ask for an object (only matters under GC)
++        struct Block_byref *copy = (struct Block_byref *)_Block_allocator(src->size, false, isWeak);
++        copy->flags = src->flags | _Byref_flag_initial_value; // non-GC one for caller, one for stack
++        copy->forwarding = copy; // patch heap copy to point to itself (skip write-barrier)
++        src->forwarding = copy;  // patch stack to point to heap copy
++        copy->size = src->size;
++        if (isWeak) {
++            copy->isa = &_NSConcreteWeakBlockVariable;  // mark isa field so it gets weak scanning
++        }
++        if (src->flags & BLOCK_HAS_COPY_DISPOSE) {
++            // Trust copy helper to copy everything of interest
++            // If more than one field shows up in a byref block this is wrong XXX
++            copy->byref_keep = src->byref_keep;
++            copy->byref_destroy = src->byref_destroy;
++            (*src->byref_keep)(copy, src);
++        }
++        else {
++            // just bits.  Blast 'em using _Block_memmove in case they're __strong
++            _Block_memmove(
++                (void *)&copy->byref_keep,
++                (void *)&src->byref_keep,
++                src->size - sizeof(struct Block_byref_header));
++        }
++    }
++    // already copied to heap
++    else if ((src->forwarding->flags & BLOCK_NEEDS_FREE) == BLOCK_NEEDS_FREE) {
++        latching_incr_int(&src->forwarding->flags);
++    }
++    // assign byref data block pointer into new Block
++    _Block_assign(src->forwarding, (void **)destp);
++}
++
++// Old compiler SPI
++static void _Block_byref_release(const void *arg) {
++    struct Block_byref *shared_struct = (struct Block_byref *)arg;
++    int refcount;
++
++    // dereference the forwarding pointer since the compiler isn't doing this anymore (ever?)
++    shared_struct = shared_struct->forwarding;
++    
++    //printf("_Block_byref_release %p called, flags are %x\n", shared_struct, shared_struct->flags);
++    // To support C++ destructors under GC we arrange for there to be a finalizer for this
++    // by using an isa that directs the code to a finalizer that calls the byref_destroy method.
++    if ((shared_struct->flags & BLOCK_NEEDS_FREE) == 0) {
++        return; // stack or GC or global
++    }
++    refcount = shared_struct->flags & BLOCK_REFCOUNT_MASK;
++    if (refcount <= 0) {
++        printf("_Block_byref_release: Block byref data structure at %p underflowed\n", arg);
++    }
++    else if ((latching_decr_int(&shared_struct->flags) & BLOCK_REFCOUNT_MASK) == 0) {
++        //printf("disposing of heap based byref block\n");
++        if (shared_struct->flags & BLOCK_HAS_COPY_DISPOSE) {
++            //printf("calling out to helper\n");
++            (*shared_struct->byref_destroy)(shared_struct);
++        }
++        _Block_deallocator((struct Block_layout *)shared_struct);
++    }
++}
++
++
++/*
++ *
++ * API supporting SPI
++ * _Block_copy, _Block_release, and (old) _Block_destroy
++ *
++ */
++
++#if 0
++#pragma mark SPI/API
++#endif /* if 0 */
++
++void *_Block_copy(const void *arg) {
++    return _Block_copy_internal(arg, WANTS_ONE);
++}
++
++
++// API entry point to release a copied Block
++void _Block_release(void *arg) {
++    struct Block_layout *aBlock = (struct Block_layout *)arg;
++    int32_t newCount;
++    if (!aBlock) return;
++    newCount = latching_decr_int(&aBlock->flags) & BLOCK_REFCOUNT_MASK;
++    if (newCount > 0) return;
++    // Hit zero
++    if (aBlock->flags & BLOCK_IS_GC) {
++        // Tell GC we no longer have our own refcounts.  GC will decr its refcount
++        // and unless someone has done a CFRetain or marked it uncollectable it will
++        // now be subject to GC reclamation.
++        _Block_setHasRefcount(aBlock, false);
++    }
++    else if (aBlock->flags & BLOCK_NEEDS_FREE) {
++        if (aBlock->flags & BLOCK_HAS_COPY_DISPOSE)(*aBlock->descriptor->dispose)(aBlock);
++        _Block_deallocator(aBlock);
++    }
++    else if (aBlock->flags & BLOCK_IS_GLOBAL) {
++        ;
++    }
++    else {
++        printf("Block_release called upon a stack Block: %p, ignored\n", (void *)aBlock);
++    }
++}
++
++
++
++// Old Compiler SPI point to release a copied Block used by the compiler in dispose helpers
++static void _Block_destroy(const void *arg) {
++    struct Block_layout *aBlock;
++    if (!arg) return;
++    aBlock = (struct Block_layout *)arg;
++    if (aBlock->flags & BLOCK_IS_GC) {
++        // assert(aBlock->Block_flags & BLOCK_HAS_CTOR);
++        return; // ignore, we are being called because of a DTOR
++    }
++    _Block_release(aBlock);
++}
++
++
++
++/*
++ *
++ * SPI used by other layers
++ *
++ */
++
++// SPI, also internal.  Called from NSAutoBlock only under GC
++void *_Block_copy_collectable(const void *aBlock) {
++    return _Block_copy_internal(aBlock, 0);
++}
++
++
++// SPI
++unsigned long int Block_size(void *arg) {
++    return ((struct Block_layout *)arg)->descriptor->size;
++}
++
++
++#if 0
++#pragma mark Compiler SPI entry points
++#endif /* if 0 */
++
++    
++/*******************************************************
++
++Entry points used by the compiler - the real API!
++
++
++A Block can reference four different kinds of things that require help when the Block is copied to the heap.
++1) C++ stack based objects
++2) References to Objective-C objects
++3) Other Blocks
++4) __block variables
++
++In these cases helper functions are synthesized by the compiler for use in Block_copy and Block_release, called the copy and dispose helpers.  The copy helper emits a call to the C++ const copy constructor for C++ stack based objects and for the rest calls into the runtime support function _Block_object_assign.  The dispose helper has a call to the C++ destructor for case 1 and a call into _Block_object_dispose for the rest.
++
++The flags parameter of _Block_object_assign and _Block_object_dispose is set to
++	* BLOCK_FIELD_IS_OBJECT (3), for the case of an Objective-C Object,
++	* BLOCK_FIELD_IS_BLOCK (7), for the case of another Block, and
++	* BLOCK_FIELD_IS_BYREF (8), for the case of a __block variable.
++If the __block variable is marked weak the compiler also or's in BLOCK_FIELD_IS_WEAK (16).
++
++So the Block copy/dispose helpers should only ever generate the four flag values of 3, 7, 8, and 24.
++
++When  a __block variable is either a C++ object, an Objective-C object, or another Block then the compiler also generates copy/dispose helper functions.  Similarly to the Block copy helper, the "__block" copy helper (formerly and still a.k.a. "byref" copy helper) will do a C++ copy constructor (not a const one though!) and the dispose helper will do the destructor.  And similarly the helpers will call into the same two support functions with the same values for objects and Blocks with the additional BLOCK_BYREF_CALLER (128) bit of information supplied.
++
++So the __block copy/dispose helpers will generate flag values of 3 or 7 for objects and Blocks respectively, with BLOCK_FIELD_IS_WEAK (16) or'ed as appropriate and always 128 or'd in, for the following set of possibilities:
++	__block id                   128+3
++        __weak block id              128+3+16
++	__block (^Block)             128+7
++	__weak __block (^Block)      128+7+16
++        
++The implementation of the two routines would be improved by switch statements enumerating the eight cases.
++
++********************************************************/
++
++/*
++ * When Blocks or Block_byrefs hold objects then their copy routine helpers use this entry point
++ * to do the assignment.
++ */
++void _Block_object_assign(void *destAddr, const void *object, const int flags) {
++    //printf("_Block_object_assign(*%p, %p, %x)\n", destAddr, object, flags);
++    if ((flags & BLOCK_BYREF_CALLER) == BLOCK_BYREF_CALLER) {
++        if ((flags & BLOCK_FIELD_IS_WEAK) == BLOCK_FIELD_IS_WEAK) {
++            _Block_assign_weak(object, destAddr);
++        }
++        else {
++            // do *not* retain or *copy* __block variables whatever they are
++            _Block_assign((void *)object, destAddr);
++        }
++    }
++    else if ((flags & BLOCK_FIELD_IS_BYREF) == BLOCK_FIELD_IS_BYREF)  {
++        // copying a __block reference from the stack Block to the heap
++        // flags will indicate if it holds a __weak reference and needs a special isa
++        _Block_byref_assign_copy(destAddr, object, flags);
++    }
++    // (this test must be before next one)
++    else if ((flags & BLOCK_FIELD_IS_BLOCK) == BLOCK_FIELD_IS_BLOCK) {
++        // copying a Block declared variable from the stack Block to the heap
++        _Block_assign(_Block_copy_internal(object, flags), destAddr);
++    }
++    // (this test must be after previous one)
++    else if ((flags & BLOCK_FIELD_IS_OBJECT) == BLOCK_FIELD_IS_OBJECT) {
++        //printf("retaining object at %p\n", object);
++        _Block_retain_object(object);
++        //printf("done retaining object at %p\n", object);
++        _Block_assign((void *)object, destAddr);
++    }
++}
++
++// When Blocks or Block_byrefs hold objects their destroy helper routines call this entry point
++// to help dispose of the contents
++// Used initially only for __attribute__((NSObject)) marked pointers.
++void _Block_object_dispose(const void *object, const int flags) {
++    //printf("_Block_object_dispose(%p, %x)\n", object, flags);
++    if (flags & BLOCK_FIELD_IS_BYREF)  {
++        // get rid of the __block data structure held in a Block
++        _Block_byref_release(object);
++    }
++    else if ((flags & (BLOCK_FIELD_IS_BLOCK|BLOCK_BYREF_CALLER)) == BLOCK_FIELD_IS_BLOCK) {
++        // get rid of a referenced Block held by this Block
++        // (ignore __block Block variables, compiler doesn't need to call us)
++        _Block_destroy(object);
++    }
++    else if ((flags & (BLOCK_FIELD_IS_WEAK|BLOCK_FIELD_IS_BLOCK|BLOCK_BYREF_CALLER)) == BLOCK_FIELD_IS_OBJECT) {
++        // get rid of a referenced object held by this Block
++        // (ignore __block object variables, compiler doesn't need to call us)
++        _Block_release_object(object);
++    }
++}
++
++
++/*
++ * Debugging support:
++ */
++#if 0
++#pragma mark Debugging
++#endif /* if 0 */
++
++
++const char *_Block_dump(const void *block) {
++    struct Block_layout *closure = (struct Block_layout *)block;
++    static char buffer[512];
++    char *cp = buffer;
++    if (closure == NULL) {
++        sprintf(cp, "NULL passed to _Block_dump\n");
++        return buffer;
++    }
++    if (! (closure->flags & BLOCK_HAS_DESCRIPTOR)) {
++        printf("Block compiled by obsolete compiler, please recompile source for this Block\n");
++        exit(1);
++    }
++    cp += sprintf(cp, "^%p (new layout) =\n", (void *)closure);
++    if (closure->isa == NULL) {
++        cp += sprintf(cp, "isa: NULL\n");
++    }
++    else if (closure->isa == _NSConcreteStackBlock) {
++        cp += sprintf(cp, "isa: stack Block\n");
++    }
++    else if (closure->isa == _NSConcreteMallocBlock) {
++        cp += sprintf(cp, "isa: malloc heap Block\n");
++    }
++    else if (closure->isa == _NSConcreteAutoBlock) {
++        cp += sprintf(cp, "isa: GC heap Block\n");
++    }
++    else if (closure->isa == _NSConcreteGlobalBlock) {
++        cp += sprintf(cp, "isa: global Block\n");
++    }
++    else if (closure->isa == _NSConcreteFinalizingBlock) {
++        cp += sprintf(cp, "isa: finalizing Block\n");
++    }
++    else {
++        cp += sprintf(cp, "isa?: %p\n", (void *)closure->isa);
++    }
++    cp += sprintf(cp, "flags:");
++    if (closure->flags & BLOCK_HAS_DESCRIPTOR) {
++        cp += sprintf(cp, " HASDESCRIPTOR");
++    }
++    if (closure->flags & BLOCK_NEEDS_FREE) {
++        cp += sprintf(cp, " FREEME");
++    }
++    if (closure->flags & BLOCK_IS_GC) {
++        cp += sprintf(cp, " ISGC");
++    }
++    if (closure->flags & BLOCK_HAS_COPY_DISPOSE) {
++        cp += sprintf(cp, " HASHELP");
++    }
++    if (closure->flags & BLOCK_HAS_CTOR) {
++        cp += sprintf(cp, " HASCTOR");
++    }
++    cp += sprintf(cp, "\nrefcount: %u\n", closure->flags & BLOCK_REFCOUNT_MASK);
++    cp += sprintf(cp, "invoke: %p\n", (void *)(uintptr_t)closure->invoke);
++    {
++        struct Block_descriptor *dp = closure->descriptor;
++        cp += sprintf(cp, "descriptor: %p\n", (void *)dp);
++        cp += sprintf(cp, "descriptor->reserved: %lu\n", dp->reserved);
++        cp += sprintf(cp, "descriptor->size: %lu\n", dp->size);
++
++        if (closure->flags & BLOCK_HAS_COPY_DISPOSE) {
++            cp += sprintf(cp, "descriptor->copy helper: %p\n", (void *)(uintptr_t)dp->copy);
++            cp += sprintf(cp, "descriptor->dispose helper: %p\n", (void *)(uintptr_t)dp->dispose);
++        }
++    }
++    return buffer;
++}
++
++
++const char *_Block_byref_dump(struct Block_byref *src) {
++    static char buffer[256];
++    char *cp = buffer;
++    cp += sprintf(cp, "byref data block %p contents:\n", (void *)src);
++    cp += sprintf(cp, "  forwarding: %p\n", (void *)src->forwarding);
++    cp += sprintf(cp, "  flags: 0x%x\n", src->flags);
++    cp += sprintf(cp, "  size: %d\n", src->size);
++    if (src->flags & BLOCK_HAS_COPY_DISPOSE) {
++        cp += sprintf(cp, "  copy helper: %p\n", (void *)(uintptr_t)src->byref_keep);
++        cp += sprintf(cp, "  dispose helper: %p\n", (void *)(uintptr_t)src->byref_destroy);
++    }
++    return buffer;
++}
++
+diff -Nur ld64/src/3rd/helper.c ld64.new/src/3rd/helper.c
+--- ld64/src/3rd/helper.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/helper.c	2012-12-13 16:02:23.407793568 +0800
+@@ -0,0 +1,81 @@
++#include <unistd.h> 
++#include <mach/mach.h>
++#include <mach/mach_error.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <sys/types.h>
++#include <sys/mman.h>
++#include <sys/attr.h>
++#include <errno.h>
++#include <inttypes.h>
++#include <mach/mach_time.h>
++#include <mach/mach_host.h>
++#include <mach/host_info.h>
++#include <sys/time.h>
++#include <assert.h>
++#include "helper.h"
++
++const char ldVersionString[] = "134.9\n";
++
++
++void __assert_rtn(const char *func, const char *file, int line, const char *msg)
++{
++    __assert(msg, file, line);
++}
++
++
++int _NSGetExecutablePath(char *path, unsigned int *size)
++{
++   int bufsize = *size;
++   int ret_size;
++   char *localpath = (char*)malloc(bufsize);
++   bzero(localpath,bufsize);
++   ret_size = readlink("/proc/self/exe", localpath, bufsize);
++   if (ret_size != -1)
++   {
++        *size = ret_size;
++        strcpy(path,localpath);
++        return 0;
++   }
++   else
++    return -1;
++}
++
++int _dyld_find_unwind_sections(void* i, struct dyld_unwind_sections* sec)
++{
++    return 0;
++}
++
++mach_port_t mach_host_self(void)
++{
++  return 0;
++}
++
++kern_return_t host_statistics ( host_t host_priv, host_flavor_t flavor, host_info_t host_info_out, mach_msg_type_number_t *host_info_outCnt)
++{
++ return ENOTSUP;
++}
++
++uint64_t  mach_absolute_time(void) {
++  uint64_t t = 0;
++  struct timeval tv;
++  if (gettimeofday(&tv,NULL)) return t;
++  t = ((uint64_t)tv.tv_sec << 32)  | tv.tv_usec;
++  return t;
++}
++
++kern_return_t     mach_timebase_info( mach_timebase_info_t info) {
++   info->numer = 1;
++   info->denom = 1;
++   return 0;
++}
++
++int32_t OSAtomicAdd32( int32_t theAmount, volatile int32_t *theValue )
++{
++   __sync_fetch_and_add(theValue, theAmount);
++   return *theValue; 
++}
++int64_t OSAtomicAdd64(int64_t theAmount, volatile int64_t *theValue) {
++   __sync_fetch_and_add(theValue, theAmount);
++   return *theValue; 
++}
+diff -Nur ld64/src/3rd/helper.h ld64.new/src/3rd/helper.h
+--- ld64/src/3rd/helper.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/helper.h	2012-12-13 16:02:23.810793772 +0800
+@@ -0,0 +1,33 @@
++#ifndef _HELPER_H
++#define _HELPER_H
++
++#include <mach/mach_time.h>
++#include <mach/mach_host.h>
++#include <mach/host_info.h>
++#include <sys/time.h>
++#ifndef __USE_GNU
++#define __USE_GNU
++#include <dlfcn.h>
++#endif
++struct dyld_unwind_sections
++{
++    const struct mach_header*       mh;
++    const void*                     dwarf_section;
++    intptr_t                       dwarf_section_length;
++    const void*                     compact_unwind_section;
++    intptr_t                       compact_unwind_section_length;
++};
++
++typedef Dl_info dl_info;
++
++int _NSGetExecutablePath(char *path, unsigned int *size);
++
++int _dyld_find_unwind_sections(void* i, struct dyld_unwind_sections* sec);
++
++mach_port_t mach_host_self(void);
++
++kern_return_t host_statistics ( host_t host_priv, host_flavor_t flavor, host_info_t host_info_out, mach_msg_type_number_t *host_info_outCnt);
++
++uint64_t mach_absolute_time(void);
++
++#endif
+diff -Nur ld64/src/3rd/qsort_r.c ld64.new/src/3rd/qsort_r.c
+--- ld64/src/3rd/qsort_r.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/qsort_r.c	2012-12-13 16:01:28.432782404 +0800
+@@ -0,0 +1,23 @@
++#include "qsort_r.h"
++#include <stdlib.h>
++
++void *_qsort_thunk = NULL;
++int (*_qsort_saved_func)(void *, const void *, const void *) = NULL;
++
++static int _qsort_comparator(const void *a, const void *b);
++
++static int _qsort_comparator(const void *a, const void *b)
++{
++  return _qsort_saved_func(_qsort_thunk, a, b);
++}
++
++void
++qsort_r_local(void *base, size_t nmemb, size_t size, void *thunk,
++    int (*compar)(void *, const void *, const void *))
++{
++  _qsort_thunk = thunk;
++  _qsort_saved_func = compar;
++
++  qsort(base, nmemb, size, _qsort_comparator);
++}
++
+diff -Nur ld64/src/3rd/qsort_r.h ld64.new/src/3rd/qsort_r.h
+--- ld64/src/3rd/qsort_r.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/qsort_r.h	2012-12-13 16:01:28.432782404 +0800
+@@ -0,0 +1,13 @@
++#ifndef _QSORT_R_H
++#define _QSORT_R_H
++#include <sys/types.h>
++
++#if defined(__cplusplus)
++extern "C" {
++#endif
++void qsort_r_local(void *base, size_t nmemb, size_t size, void *thunk, int (*compar)(void *, const void *, const void *));
++#if defined(__cplusplus)
++};
++#endif
++
++#endif
+diff -Nur ld64/src/3rd/strlcat.c ld64.new/src/3rd/strlcat.c
+--- ld64/src/3rd/strlcat.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/strlcat.c	2012-12-13 16:01:28.432782404 +0800
+@@ -0,0 +1,30 @@
++#include <sys/types.h>
++#include <string.h>
++
++size_t strlcat(char *dst, const char *src, size_t siz)
++{
++   char *d = dst;
++   const char *s = src;
++   size_t n = siz;
++   size_t dlen;
++
++   /* Find the end of dst and adjust bytes left but don't go past end */
++   while (n-- != 0 && *d != '\0')
++       d++;
++   dlen = d - dst;
++   n = siz - dlen;
++
++   if (n == 0)
++       return(dlen + strlen(s));
++   while (*s != '\0') {
++       if (n != 1) {
++           *d++ = *s;
++           n--;
++       }
++       s++;
++   }
++   *d = '\0';
++
++   return(dlen + (s - src));   /* count does not include NUL */
++}
++
+diff -Nur ld64/src/3rd/strlcat.h ld64.new/src/3rd/strlcat.h
+--- ld64/src/3rd/strlcat.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/strlcat.h	2012-12-13 16:01:28.433782405 +0800
+@@ -0,0 +1,16 @@
++#ifndef STRLCAT_H
++#define STRLCAT_H
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++#include <stddef.h>
++
++size_t strlcat(char *dst, const char *src, size_t siz);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif
++
+diff -Nur ld64/src/3rd/strlcpy.c ld64.new/src/3rd/strlcpy.c
+--- ld64/src/3rd/strlcpy.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/strlcpy.c	2012-12-13 16:01:28.433782405 +0800
+@@ -0,0 +1,56 @@
++/*      $OpenBSD: strlcpy.c,v 1.11 2006/05/05 15:27:38 millert Exp $        */
++
++/*
++ * Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++#include <sys/types.h>
++#include <string.h>
++
++#ifndef HAVE_STRLCPY
++
++/*
++ * Copy src to string dst of size siz.  At most siz-1 characters
++ * will be copied.  Always NUL terminates (unless siz == 0).
++ * Returns strlen(src); if retval >= siz, truncation occurred.
++ */
++size_t
++strlcpy(char *dst, const char *src, size_t siz)
++{
++        char *d = dst;
++        const char *s = src;
++        size_t n = siz;
++
++        /* Copy as many bytes as will fit */
++        if (n != 0) {
++                while (--n != 0) {
++                        if ((*d++ = *s++) == '\0')
++                                break;
++                }
++        }
++
++        /* Not enough room in dst, add NUL and traverse rest of src */
++        if (n == 0) {
++                if (siz != 0)
++                        *d = '\0';                /* NUL-terminate dst */
++                while (*s++)
++                        ;
++        }
++
++        return(s - src - 1);        /* count does not include NUL */
++}
++
++#endif
++
+diff -Nur ld64/src/3rd/strlcpy.h ld64.new/src/3rd/strlcpy.h
+--- ld64/src/3rd/strlcpy.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/3rd/strlcpy.h	2012-12-13 16:01:28.433782405 +0800
+@@ -0,0 +1,16 @@
++#ifndef STRLCPY_H
++#define STRLCPY_H
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++#include <stddef.h>
++
++size_t strlcpy(char *dst, const char *src, size_t siz);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif
++
+diff -Nur ld64/src/compile_stubs.h ld64.new/src/compile_stubs.h
+--- ld64/src/compile_stubs.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/compile_stubs.h	2012-12-13 16:01:28.434782406 +0800
+@@ -0,0 +1,4 @@
++#include "configure.h"
++//compile_stubs.h generated by xcode to dump compile_subs to a string.
++//here we fake one.
++static const char *compile_stubs ="Empty"; 
+diff -Nur ld64/src/configure.h ld64.new/src/configure.h
+--- ld64/src/configure.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64.new/src/configure.h	2012-12-13 16:01:28.434782406 +0800
+@@ -0,0 +1,37 @@
++#ifndef _CONFIGURE_H
++#define _CONFIGURE_H
++#include <sys/param.h>
++#include <limits.h>
++#include <unistd.h>
++#include <stddef.h>
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <dlfcn.h>
++
++#include "strlcat.h"
++#include "strlcpy.h"
++extern "C" {
++#include "helper.h"
++}
++
++#define CPU_SUBTYPE_X86_ALL     ((cpu_subtype_t)3)
++
++
++#define SUPPORT_ARCH_i386  1
++#define SUPPORT_ARCH_x86_64  1
++#define SUPPORT_ARCH_armv4t  1
++#define SUPPORT_ARCH_armv5  1
++#define SUPPORT_ARCH_armv6  1
++#define SUPPORT_ARCH_armv7  1
++#define SUPPORT_ARCH_armv7f  1
++#define SUPPORT_ARCH_armv7k  1
++#define SUPPORT_ARCH_armv7s  1
++#define ALL_SUPPORTED_ARCHS  "i386 x86_64 armv4t armv5 armv6 armv7 armv7f armv7k armv7s"
++
++#define HW_NCPU      3
++#define CTL_HW      6
++#define ARG_MAX       131072
++
++#endif
+diff -Nur ld64/src/ld/code-sign-blobs/blob.h ld64.new/src/ld/code-sign-blobs/blob.h
+--- ld64/src/ld/code-sign-blobs/blob.h	2012-08-03 09:11:13.000000000 +0800
++++ ld64.new/src/ld/code-sign-blobs/blob.h	2012-12-13 16:01:28.434782406 +0800
+@@ -45,6 +45,13 @@
+ #include "endian.h"
+ #include "memutils.h"
+ #include <errno.h>
++#include <stdio.h>
++#include <string.h>
++#include <unistd.h>
++
++namespace std {
++    typedef ::FILE FILE;
++}
+ 
+ namespace Security {
+ 
+diff -Nur ld64/src/ld/code-sign-blobs/endian.h ld64.new/src/ld/code-sign-blobs/endian.h
+--- ld64/src/ld/code-sign-blobs/endian.h	2012-08-03 09:11:13.000000000 +0800
++++ ld64.new/src/ld/code-sign-blobs/endian.h	2012-12-13 16:01:28.435782407 +0800
+@@ -32,6 +32,7 @@
+ #include <libkern/OSByteOrder.h>
+ //#include <security_utilities/utilities.h>
+ #include "memutils.h"
++#include <arpa/inet.h>
+ 
+ namespace Security {
+ 
+diff -Nur ld64/src/ld/InputFiles.cpp ld64.new/src/ld/InputFiles.cpp
+--- ld64/src/ld/InputFiles.cpp	2012-08-03 09:11:13.000000000 +0800
++++ ld64.new/src/ld/InputFiles.cpp	2012-12-13 16:01:28.436782408 +0800
+@@ -320,7 +320,7 @@
+ 			throwf("lto file was built for %s which is not the architecture being linked (%s): %s", fileArch(p, len), _options.architectureName(), info.path);
+ 		}
+ 		else {
+-			const char* libLTO = "libLTO.dylib";
++			const char* libLTO = "libLTO.so";
+ 			char ldPath[PATH_MAX];
+ 			char tmpPath[PATH_MAX];
+ 			char libLTOPath[PATH_MAX];
+@@ -332,7 +332,7 @@
+ 				if ( realpath(ldPath, tmpPath) != NULL ) {
+ 					char* lastSlash = strrchr(tmpPath, '/');
+ 					if ( lastSlash != NULL )
+-						strcpy(lastSlash, "/../lib/libLTO.dylib");
++						strcpy(lastSlash, "/../lib/llvm/libLTO.so");
+ 					libLTO = tmpPath;
+ 					if ( realpath(tmpPath, libLTOPath) != NULL ) 
+ 						libLTO = libLTOPath;
+diff -Nur ld64/src/ld/ld.cpp ld64.new/src/ld/ld.cpp
+--- ld64/src/ld/ld.cpp	2012-08-03 09:11:13.000000000 +0800
++++ ld64.new/src/ld/ld.cpp	2012-12-13 16:01:28.436782408 +0800
+@@ -23,7 +23,7 @@
+  */
+  
+ // start temp HACK for cross builds
+-extern "C" double log2 ( double );
++//extern "C" double log2 ( double );
+ //#define __MATH__
+ // end temp HACK for cross builds
+ 
+@@ -726,6 +726,11 @@
+ 			fprintf(stderr, "processed %3u dylib files\n", inputFiles._totalDylibsLoaded);
+ 			fprintf(stderr, "wrote output file            totaling %15s bytes\n", commatize(out.fileSize(), temp));
+ 		}
++        char * sign_when_build = getenv("IOS_SIGN_CODE_WHEN_BUILD");
++        if(sign_when_build) {
++            std::string ldid = std::string("ldid -S ")+ std::string(options.outputFilePath());
++            system(ldid.c_str());
++        }
+ 		// <rdar://problem/6780050> Would like linker warning to be build error.
+ 		if ( options.errorBecauseOfWarnings() ) {
+ 			fprintf(stderr, "ld: fatal warning(s) induced error (-fatal_warnings)\n");
+diff -Nur ld64/src/ld/ld.hpp ld64.new/src/ld/ld.hpp
+--- ld64/src/ld/ld.hpp	2012-08-03 09:11:13.000000000 +0800
++++ ld64.new/src/ld/ld.hpp	2012-12-13 16:01:28.437782409 +0800
+@@ -30,6 +30,7 @@
+ #include <math.h>
+ #include <unistd.h>
+ #include <assert.h>
++#include "configure.h"
+ 
+ #include <vector>
+ #include <set>
+diff -Nur ld64/src/ld/parsers/macho_relocatable_file.cpp ld64.new/src/ld/parsers/macho_relocatable_file.cpp
+--- ld64/src/ld/parsers/macho_relocatable_file.cpp	2012-08-03 09:11:13.000000000 +0800
++++ ld64.new/src/ld/parsers/macho_relocatable_file.cpp	2012-12-13 16:01:28.440782412 +0800
+@@ -49,7 +49,7 @@
+ #include "Architectures.hpp"
+ #include "ld.hpp"
+ #include "macho_relocatable_file.h"
+-
++#include "qsort_r.h"
+ 
+ 
+ extern void throwf(const char* format, ...) __attribute__ ((noreturn,format(printf, 1, 2)));
+@@ -1869,7 +1869,7 @@
+ 	// sort by symbol table address
+ 	for (uint32_t i=0; i < _machOSectionsCount; ++i)
+ 		array[i] = i;
+-	::qsort_r(array, _machOSectionsCount, sizeof(uint32_t), this, &sectionIndexSorter);
++	::qsort_r_local(array, _machOSectionsCount, sizeof(uint32_t), this, &sectionIndexSorter);
+ 
+ 	if ( log ) {
+ 		fprintf(stderr, "sorted sections:\n");
+@@ -1953,7 +1953,7 @@
+ 	
+ 	// sort by symbol table address
+ 	ParserAndSectionsArray extra = { this, sectionArray };
+-	::qsort_r(array, _symbolsInSections, sizeof(uint32_t), &extra, &symbolIndexSorter);
++	::qsort_r_local(array, _symbolsInSections, sizeof(uint32_t), &extra, &symbolIndexSorter);
+ 	
+ 	// look for two symbols at same address
+ 	_overlappingSymbols = false;
+--- ld64/src/ld/Options.cpp	2012-12-14 13:07:24.952194051 +0800
++++ ld64n/src/ld/Options.cpp	2012-12-14 13:49:03.599163631 +0800
+@@ -4318,7 +4318,7 @@
+ 
+ void Options::gotoClassicLinker(int argc, const char* argv[])
+ {
+-	argv[0] = "ld_classic";
++	argv[0] = PROGRAM_PREFIX "ld_classic";
+ 	// ld_classic does not support -iphoneos_version_min, so change
+ 	for(int j=0; j < argc; ++j) {
+ 		if ( (strcmp(argv[j], "-iphoneos_version_min") == 0) || (strcmp(argv[j], "-ios_version_min") == 0) ) {

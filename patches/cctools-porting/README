@@ -1,0 +1,10 @@
+cctools/ld64 for linux porting tool.
+By Cjacker <cjacker@gmail.com>
+supported versions:
+cctools-829/836, maybe other versions.
+ld64-128.2/ld64-134.9, maybe other versions.
+
+headers: external headers from MacOSX and some fake headers to support compilation.
+projectfiles: automake project files for cctools/ld64
+patches: needed patches for cctools/ld64
+cctools-ld64.sh: a shell scripts to auto generate cctools-ld64 porting for linux.

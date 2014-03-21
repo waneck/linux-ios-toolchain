@@ -1,0 +1,21 @@
+#!/bin/bash
+
+TARGET=$1
+
+if [ -z "$TARGET" ]; then
+	PS3="Please select the desired target: "
+	options=("arm-apple-darwin11" "x86_64-apple-darwin11" "i686-apple-darwin11")
+	select opt in "${options[@]}"
+  do
+    case $opt in
+      "" )
+        echo $opt;;
+      *)
+        TARGET=$opt
+        break;;
+    esac
+  done
+fi
+
+echo "Configuring for $TARGET ..."
+echo 'TARGET="$TARGET"' > configure.mk

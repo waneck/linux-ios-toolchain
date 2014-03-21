@@ -1,0 +1,9 @@
+= README
+
+ios-toolchain based on clang for linux.
+
+== build
+
+  $./configure --target=arm-apple-darwin11 --prefix=/usr
+  $make
+  $make install

@@ -1,0 +1,337 @@
+diff --git a/ar/archive.c b/ar/archive.c
+index 12bd0ed..7f3555c 100644
+--- a/ar/archive.c
++++ b/ar/archive.c
+@@ -68,6 +68,7 @@ static char rcsid[] = "$NetBSD: archive.c,v 1.7 1995/03/26 03:27:46 glass Exp $"
+ 
+ #include <sys/param.h>
+ #include <sys/stat.h>
++#include <sys/file.h>
+ 
+ #include <ar.h>
+ #include <dirent.h>
+@@ -321,7 +322,7 @@ put_arobj(cfp, sb)
+ 		 * things for exact binary equality.
+ 		 */
+ 		if (getenv("ZERO_AR_DATE") == NULL)
+-			tv_sec = (long int)sb->st_mtimespec.tv_sec;
++			tv_sec = (long int)sb->st_mtime;
+ 		else
+ 			tv_sec = (long int)0;
+ 
+diff --git a/as/bignum.h b/as/bignum.h
+index e9b0682..612a70c 100644
+--- a/as/bignum.h
++++ b/as/bignum.h
+@@ -1,3 +1,6 @@
++#ifndef _BIGNUM_H_
++#define _BIGNUM_H_
++
+ /* bignum.h-arbitrary precision integers
+    Copyright (C) 1987 Free Software Foundation, Inc.
+ 
+@@ -44,3 +47,5 @@ typedef unsigned short int	LITTLENUM_TYPE;
+ /* JF truncated this to get around a problem with GCC */
+ #define	LOG_TO_BASE_2_OF_10	(3.3219280948873623478703194294893901758651)
+ /* WARNING: I haven't checked that the trailing digits are correct! */
++
++#endif // _BIGNUM_H_
+diff --git a/as/relax.h b/as/relax.h
+index c845893..33ecc2e 100644
+--- a/as/relax.h
++++ b/as/relax.h
+@@ -1,3 +1,5 @@
++#ifndef _RELAX_H
++#define _RELAX_H
+ /* The type used for a target address */
+ #ifdef ARCH64
+ typedef uint64_t relax_addressT;
+@@ -48,3 +50,4 @@ typedef struct relax_type {
+     relax_substateT rlx_more;	  /* Next longer relax-state. */
+ 				  /* 0 means there is no 'next' relax-state. */
+ } relax_typeS;
++#endif
+diff --git a/include/mach/ppc/_structs.h b/include/mach/ppc/_structs.h
+index f2c78cd..20851d3 100644
+--- a/include/mach/ppc/_structs.h
++++ b/include/mach/ppc/_structs.h
+@@ -136,7 +136,7 @@ _STRUCT_PPC_THREAD_STATE
+ };
+ #endif /* __DARWIN_UNIX03 */
+ 
+-#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
++#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) || defined(__linux__)
+ 
+ #pragma pack(4)			/* Make sure the structure stays as we defined it */
+ 
+@@ -353,7 +353,7 @@ _STRUCT_PPC_EXCEPTION_STATE
+ };
+ #endif /* __DARWIN_UNIX03 */
+ 
+-#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
++#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) || defined(__linux__)
+ #if __DARWIN_UNIX03
+ #define _STRUCT_PPC_EXCEPTION_STATE64	struct __darwin_ppc_exception_state64
+ _STRUCT_PPC_EXCEPTION_STATE64
+diff --git a/include/mach/ppc/thread_status.h b/include/mach/ppc/thread_status.h
+index b9a3b78..92d8860 100644
+--- a/include/mach/ppc/thread_status.h
++++ b/include/mach/ppc/thread_status.h
+@@ -70,7 +70,7 @@
+ */
+ 
+ typedef _STRUCT_PPC_THREAD_STATE	ppc_thread_state_t;
+-#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
++#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) || defined(__linux__)
+ typedef _STRUCT_PPC_THREAD_STATE64	ppc_thread_state64_t;
+ #endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
+ typedef _STRUCT_PPC_FLOAT_STATE		ppc_float_state_t;
+diff --git a/ld64/src/ld/InputFiles.cpp b/ld64/src/ld/InputFiles.cpp
+index c0b5cdb..91e544a 100644
+--- a/ld64/src/ld/InputFiles.cpp
++++ b/ld64/src/ld/InputFiles.cpp
+@@ -320,7 +320,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
+ 			throwf("lto file was built for %s which is not the architecture being linked (%s): %s", fileArch(p, len), _options.architectureName(), info.path);
+ 		}
+ 		else {
+-			const char* libLTO = "libLTO.dylib";
++			const char* libLTO = "libLTO.so";
+ 			char ldPath[PATH_MAX];
+ 			char tmpPath[PATH_MAX];
+ 			char libLTOPath[PATH_MAX];
+@@ -332,7 +332,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info, bool indirectDylib
+ 				if ( realpath(ldPath, tmpPath) != NULL ) {
+ 					char* lastSlash = strrchr(tmpPath, '/');
+ 					if ( lastSlash != NULL )
+-						strcpy(lastSlash, "/../lib/libLTO.dylib");
++						strcpy(lastSlash, "/../lib/llvm/libLTO.so");
+ 					libLTO = tmpPath;
+ 					if ( realpath(tmpPath, libLTOPath) != NULL ) 
+ 						libLTO = libLTOPath;
+diff --git a/ld64/src/ld/Options.cpp b/ld64/src/ld/Options.cpp
+index 543a348..f19be19 100644
+--- a/ld64/src/ld/Options.cpp
++++ b/ld64/src/ld/Options.cpp
+@@ -2269,6 +2269,10 @@ void Options::parse(int argc, const char* argv[])
+ 			else if ( (strcmp(arg, "-ios_version_min") == 0) || (strcmp(arg, "-iphoneos_version_min") == 0) ) {
+ 				setIOSVersionMin(argv[++i]); 
+ 			}
++			else if ( (strcmp(arg, "-aspen_version_min") == 0) ) {
++                //for backward compitable with llvm-gcc.
++                ++i;
++			}
+ 			else if ( strcmp(arg, "-ios_simulator_version_min") == 0 ) {
+ 				setIOSVersionMin(argv[++i]);
+ 			}
+@@ -4314,7 +4318,7 @@ void Options::checkForClassic(int argc, const char* argv[])
+ 
+ void Options::gotoClassicLinker(int argc, const char* argv[])
+ {
+-	argv[0] = "ld_classic";
++	argv[0] = PROGRAM_PREFIX "ld_classic";
+ 	// ld_classic does not support -iphoneos_version_min, so change
+ 	for(int j=0; j < argc; ++j) {
+ 		if ( (strcmp(argv[j], "-iphoneos_version_min") == 0) || (strcmp(argv[j], "-ios_version_min") == 0) ) {
+diff --git a/ld64/src/ld/code-sign-blobs/blob.h b/ld64/src/ld/code-sign-blobs/blob.h
+index db18746..a3a4af4 100644
+--- a/ld64/src/ld/code-sign-blobs/blob.h
++++ b/ld64/src/ld/code-sign-blobs/blob.h
+@@ -45,6 +45,13 @@
+ #include "endian.h"
+ #include "memutils.h"
+ #include <errno.h>
++#include <stdio.h>
++#include <string.h>
++#include <unistd.h>
++
++namespace std {
++    typedef ::FILE FILE;
++}
+ 
+ namespace Security {
+ 
+diff --git a/ld64/src/ld/code-sign-blobs/endian.h b/ld64/src/ld/code-sign-blobs/endian.h
+index f312e43..b55453c 100644
+--- a/ld64/src/ld/code-sign-blobs/endian.h
++++ b/ld64/src/ld/code-sign-blobs/endian.h
+@@ -32,6 +32,7 @@
+ #include <libkern/OSByteOrder.h>
+ //#include <security_utilities/utilities.h>
+ #include "memutils.h"
++#include <arpa/inet.h>
+ 
+ namespace Security {
+ 
+diff --git a/ld64/src/ld/ld.cpp b/ld64/src/ld/ld.cpp
+index 1a234db..d913f17 100644
+--- a/ld64/src/ld/ld.cpp
++++ b/ld64/src/ld/ld.cpp
+@@ -23,7 +23,7 @@
+  */
+  
+ // start temp HACK for cross builds
+-extern "C" double log2 ( double );
++//extern "C" double log2 ( double );
+ //#define __MATH__
+ // end temp HACK for cross builds
+ 
+@@ -726,6 +726,11 @@ int main(int argc, const char* argv[])
+ 			fprintf(stderr, "processed %3u dylib files\n", inputFiles._totalDylibsLoaded);
+ 			fprintf(stderr, "wrote output file            totaling %15s bytes\n", commatize(out.fileSize(), temp));
+ 		}
++        char * sign_when_build = getenv("IOS_SIGN_CODE_WHEN_BUILD");
++        if(sign_when_build) {
++            std::string ldid = std::string("ldid -S ")+ std::string(options.outputFilePath());
++            system(ldid.c_str());
++        }
+ 		// <rdar://problem/6780050> Would like linker warning to be build error.
+ 		if ( options.errorBecauseOfWarnings() ) {
+ 			fprintf(stderr, "ld: fatal warning(s) induced error (-fatal_warnings)\n");
+diff --git a/ld64/src/ld/ld.hpp b/ld64/src/ld/ld.hpp
+index ed021ff..fb333b1 100644
+--- a/ld64/src/ld/ld.hpp
++++ b/ld64/src/ld/ld.hpp
+@@ -30,6 +30,7 @@
+ #include <math.h>
+ #include <unistd.h>
+ #include <assert.h>
++#include "configure.h"
+ 
+ #include <vector>
+ #include <set>
+diff --git a/ld64/src/ld/parsers/macho_relocatable_file.cpp b/ld64/src/ld/parsers/macho_relocatable_file.cpp
+index e6c3efe..2c310fe 100644
+--- a/ld64/src/ld/parsers/macho_relocatable_file.cpp
++++ b/ld64/src/ld/parsers/macho_relocatable_file.cpp
+@@ -49,7 +49,7 @@
+ #include "Architectures.hpp"
+ #include "ld.hpp"
+ #include "macho_relocatable_file.h"
+-
++#include "qsort_r.h"
+ 
+ 
+ extern void throwf(const char* format, ...) __attribute__ ((noreturn,format(printf, 1, 2)));
+@@ -1869,7 +1869,7 @@ void Parser<A>::makeSortedSectionsArray(uint32_t array[])
+ 	// sort by symbol table address
+ 	for (uint32_t i=0; i < _machOSectionsCount; ++i)
+ 		array[i] = i;
+-	::qsort_r(array, _machOSectionsCount, sizeof(uint32_t), this, &sectionIndexSorter);
++	::qsort_r_local(array, _machOSectionsCount, sizeof(uint32_t), this, &sectionIndexSorter);
+ 
+ 	if ( log ) {
+ 		fprintf(stderr, "sorted sections:\n");
+@@ -1953,7 +1953,7 @@ void Parser<A>::makeSortedSymbolsArray(uint32_t array[], const uint32_t sectionA
+ 	
+ 	// sort by symbol table address
+ 	ParserAndSectionsArray extra = { this, sectionArray };
+-	::qsort_r(array, _symbolsInSections, sizeof(uint32_t), &extra, &symbolIndexSorter);
++	::qsort_r_local(array, _symbolsInSections, sizeof(uint32_t), &extra, &symbolIndexSorter);
+ 	
+ 	// look for two symbols at same address
+ 	_overlappingSymbols = false;
+diff --git a/libobjc2/objc/toydispatch.h b/libobjc2/objc/toydispatch.h
+index 3737714..1c0dd81 100644
+--- a/libobjc2/objc/toydispatch.h
++++ b/libobjc2/objc/toydispatch.h
+@@ -11,12 +11,6 @@
+  */
+ 
+ /* If the real libdispatch exists, use that instead of the toy one. */
+-#if !defined(__has_include)
+-#define __has_include(x) 0
+-#endif
+-#if __has_include(<dispatch/dispatch.h>) && !defined(__TOY_DISPATCH__)
+-#	include <dispatch/dispatch.h>
+-#else
+ 
+ /**
+  * Function type for functions that can be added to dispatch queues.
+@@ -44,4 +38,3 @@ void dispatch_release(dispatch_queue_t queue);
+ 
+ #define dispatch_retain toy_dispatch_retain
+ void dispatch_retain(dispatch_queue_t queue);
+-#endif
+diff --git a/libstuff/execute.c b/libstuff/execute.c
+index 46a705c..c75cae1 100644
+--- a/libstuff/execute.c
++++ b/libstuff/execute.c
+@@ -166,7 +166,8 @@ char *str)
+ 	if(p != NULL)
+ 	    p[1] = '\0';
+ 
+-	return(makestr(prefix, str, NULL));
++    //NOTE, here we add a target alias to command str;
++	return(makestr(prefix, PROGRAM_PREFIX, str, NULL));
+ }
+ 
+ /*
+diff --git a/libstuff/llvm.c b/libstuff/llvm.c
+index 35e3a6e..1134ed5 100644
+--- a/libstuff/llvm.c
++++ b/libstuff/llvm.c
+@@ -3,6 +3,7 @@
+ #include <libc.h>
+ #include <sys/file.h>
+ #include <dlfcn.h>
++#include <stdint.h>
+ #include "llvm-c/Disassembler.h"
+ #include "stuff/llvm.h"
+ #include "stuff/allocate.h"
+@@ -13,7 +14,7 @@
+  * plan to include it (along with the current libLTO APIs) in a generic
+  * libLLVM.dylib.
+  */
+-#define LIB_LLVM "libLTO.dylib"
++#define LIB_LLVM "libLTO.so"
+ 
+ static int tried_to_load_llvm = 0;
+ static void *llvm_handle = NULL;
+@@ -66,10 +67,7 @@ LLVMSymbolLookupCallback SymbolLookUp)
+ 	    if(llvm_handle == NULL){
+ 		free(llvm_path);
+ 		llvm_path = NULL;
+-		llvm_handle = dlopen("/Applications/Xcode.app/Contents/"
+-				     "Developer/Toolchains/XcodeDefault."
+-				     "xctoolchain/usr/lib/" LIB_LLVM,
+-				     RTLD_NOW);
++		llvm_handle = dlopen("/usr/lib/llvm/" LIB_LLVM, RTLD_NOW);
+ 	    }
+ 	    if(llvm_handle == NULL)
+ 		return(0);
+diff --git a/libstuff/lto.c b/libstuff/lto.c
+index 6f5758d..14ea214 100644
+--- a/libstuff/lto.c
++++ b/libstuff/lto.c
+@@ -109,16 +109,13 @@ void **pmod) /* maybe NULL */
+ 	    p = rindex(prefix, '/');
+ 	    if(p != NULL)
+ 		p[1] = '\0';
+-	    lto_path = makestr(prefix, "../lib/libLTO.dylib", NULL);
++	    lto_path = makestr(prefix, "../lib/libLTO.so", NULL);
+ 
+ 	    lto_handle = dlopen(lto_path, RTLD_NOW);
+ 	    if(lto_handle == NULL){
+ 		free(lto_path);
+ 		lto_path = NULL;
+-		lto_handle = dlopen("/Applications/Xcode.app/Contents/"
+-				    "Developer/Toolchains/XcodeDefault."
+-				    "xctoolchain/usr/lib/libLTO.dylib",
+-				    RTLD_NOW);
++		lto_handle = dlopen("/usr/lib/llvm/libLTO.so", RTLD_NOW);
+ 	    }
+ 	    if(lto_handle == NULL)
+ 		return(0);
+diff --git a/misc/libtool.c b/misc/libtool.c
+index 70b85b6..c6b854f 100644
+--- a/misc/libtool.c
++++ b/misc/libtool.c
+@@ -374,7 +374,7 @@ char **envp)
+ 	    p++;
+ 	else
+ 	    p = argv[0];
+-	if(strncmp(p, "ranlib", sizeof("ranlib") - 1) == 0)
++	if(strncmp(p, PROGRAM_PREFIX"ranlib", sizeof(PROGRAM_PREFIX"ranlib") - 1) == 0)
+ 	    cmd_flags.ranlib = TRUE;
+ 
+ 	/* The default is to used long names */
