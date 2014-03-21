@@ -17,6 +17,7 @@
 /original/cctools-*/**/*.o
 /original/cctools-*/**/*.lo
 /original/cctools-*/**/*.la
+/original/cctools-*/**/Makefile
 
 
 original/cctools-839-ld64-134.9/ar/.deps/
