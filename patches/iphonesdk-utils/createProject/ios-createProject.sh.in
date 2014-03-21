@@ -1,0 +1,84 @@
+#!/bin/bash
+TemplateRoot=@TEMPLATES_DIR@
+
+echo "iPhone Project Createor"
+echo "---------------------------"
+
+count=0
+declare -a template_array
+
+#filter Example codes out
+for template_file in $TemplateRoot/[^Example]*.template
+do
+    template_name=`basename $template_file|sed 's/.template//g'`
+    template_array[count]=$template_name
+    count=`expr $count + 1`
+done
+
+#now example codes
+for template_file in $TemplateRoot/Example*.template
+do
+    template_name=`basename $template_file|sed 's/.template//g'`
+    template_array[count]=$template_name
+    count=`expr $count + 1`
+done
+
+
+i=0
+while [ "$i" -lt $count ] ; do
+    echo -e "["$i".]" `echo ${template_array[$i]}|sed 's/_/ /g'`
+    i=`expr $i + 1`
+done
+
+echo -e "Choose a Template:\c"
+read template_n
+
+#detect it is a number or not.
+declare -i INT=1;
+INT=$template_n >/dev/null 2>&1;
+while [ "$INT" != "$template_n" ]; do 
+    echo -e "Choose a Template:\c"
+    read template_n
+    INT=$template_n >/dev/null 2>&1;
+done
+
+count=`expr $count - 1`
+
+while [ "$template_n" -gt $count ] || [ "$template_n" -lt 0 ]; do
+    echo -e "Choose a Template:\c"
+    read template_n
+done
+
+choosed_template=$TemplateRoot/${template_array[$template_n]}.template
+#tar xf $choosed_template -C .
+
+while [ x"$project_name" = x ]; do
+    echo -e "Project Name:\c"
+    read project_name
+done
+
+package_name=com.$USER.`tr '[A-Z]' '[a-z]' <<<"$project_name"`
+#start create your project
+if [ -d ./$project_name ]; then
+mv ./$project_name ./$project_name.bak
+fi
+
+mkdir -p ./$project_name
+tar xf $choosed_template -C ./$project_name
+pushd ./$project_name >/dev/null
+
+for f in * 
+do
+    if [[ "${f/TEMPLATE_PROJECT/}" != "$f" ]]; then
+        mv $f `echo $f|sed "s/TEMPLATE_PROJECT/$project_name/g"`
+    fi
+done
+
+for f in `find` 
+do
+    sed -i "s/TEMPLATE_PROJECT/$project_name/g" $f 2>/dev/null
+    sed -i "s/TEMPLATE_PACKAGE/$package_name/g" $f 2>/dev/null
+done
+popd >/dev/null
+echo "---------------------------"
+echo "Project $project_name generated in ./$project_name folder."

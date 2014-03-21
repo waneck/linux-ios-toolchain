@@ -1,0 +1,98 @@
+diff -Nur llvm-3.3/tools/lldb/lib/Makefile llvm-3.3.new/tools/lldb/lib/Makefile
+--- llvm-3.3/tools/lldb/lib/Makefile	2012-12-11 22:27:14.000000000 +0800
++++ llvm-3.3.new/tools/lldb/lib/Makefile	2012-12-15 13:52:58.028792458 +0800
+@@ -98,6 +98,9 @@
+               lldbPluginProcessPOSIX.a \
+               lldbPluginDynamicLoaderMacOSX.a \
+               lldbPluginDynamicLoaderDarwinKernel.a \
++              lldbPluginObjectContainerUniversalMachO.a \
++              lldbPluginProcessMachCore.a \
++              lldbPluginObjectFileMachO.a \
+               lldbPluginOperatingSystemDarwinKernel.a
+ 
+ endif
+diff -Nur llvm-3.3/tools/lldb/source/lldb.cpp llvm-3.3.new/tools/lldb/source/lldb.cpp
+--- llvm-3.3/tools/lldb/source/lldb.cpp	2012-12-15 13:51:39.414770191 +0800
++++ llvm-3.3.new/tools/lldb/source/lldb.cpp	2012-12-15 13:58:39.469860746 +0800
+@@ -64,6 +64,16 @@
+ 
+ #if defined (__linux__)
+ #include "Plugins/Process/Linux/ProcessLinux.h"
++#include "Plugins/DynamicLoader/MacOSX-DYLD/DynamicLoaderMacOSXDYLD.h"
++#include "Plugins/LanguageRuntime/CPlusPlus/ItaniumABI/ItaniumABILanguageRuntime.h"
++#include "Plugins/LanguageRuntime/ObjC/AppleObjCRuntime/AppleObjCRuntimeV1.h"
++#include "Plugins/LanguageRuntime/ObjC/AppleObjCRuntime/AppleObjCRuntimeV2.h"
++#include "Plugins/ObjectContainer/Universal-Mach-O/ObjectContainerUniversalMachO.h"
++#include "Plugins/ObjectFile/Mach-O/ObjectFileMachO.h"
++#include "Plugins/Platform/MacOSX/PlatformMacOSX.h"
++#include "Plugins/Platform/MacOSX/PlatformRemoteiOS.h"
++#include "Plugins/Platform/MacOSX/PlatformiOSSimulator.h"
++#include "Plugins/Process/gdb-remote/ProcessGDBRemote.h"
+ #endif
+ 
+ #if defined (__FreeBSD__)
+@@ -138,6 +148,18 @@
+         // Linux hosted plugins
+         //----------------------------------------------------------------------
+         ProcessLinux::Initialize();
++        DynamicLoaderMacOSXDYLD::Initialize();
++        SymbolFileDWARFDebugMap::Initialize();
++        ObjectContainerUniversalMachO::Initialize();
++        ItaniumABILanguageRuntime::Initialize();
++        AppleObjCRuntimeV2::Initialize();
++        AppleObjCRuntimeV1::Initialize();
++        ProcessGDBRemote::Initialize();
++        ProcessMachCore::Initialize();
++        PlatformRemoteiOS::Initialize();
++        ObjectFileMachO::Initialize();
++        PlatformMacOSX::Initialize();
++        PlatformiOSSimulator::Initialize();
+ #endif
+ #if defined (__FreeBSD__)
+         ProcessFreeBSD::Initialize();
+diff -Nur llvm-3.3/tools/lldb/source/Plugins/Makefile llvm-3.3.new/tools/lldb/source/Plugins/Makefile
+--- llvm-3.3/tools/lldb/source/Plugins/Makefile	2012-12-11 22:26:47.000000000 +0800
++++ llvm-3.3.new/tools/lldb/source/Plugins/Makefile	2012-12-15 13:53:34.381800860 +0800
+@@ -36,6 +36,8 @@
+ DIRS += DynamicLoader/MacOSX-DYLD DynamicLoader/Darwin-Kernel
+ DIRS += OperatingSystem/Darwin-Kernel
+ DIRS += Process/Linux Process/POSIX
++DIRS += Process/mach-core
++DIRS += ObjectContainer/Universal-Mach-O ObjectFile/Mach-O
+ endif
+ 
+ ifeq ($(HOST_OS),FreeBSD)
+diff -Nur llvm-3.3/tools/lldb/source/Plugins/ObjectFile/Mach-O/ObjectFileMachO.cpp llvm-3.3.new/tools/lldb/source/Plugins/ObjectFile/Mach-O/ObjectFileMachO.cpp
+--- llvm-3.3/tools/lldb/source/Plugins/ObjectFile/Mach-O/ObjectFileMachO.cpp	2012-12-14 18:26:37.000000000 +0800
++++ llvm-3.3.new/tools/lldb/source/Plugins/ObjectFile/Mach-O/ObjectFileMachO.cpp	2012-12-15 13:59:29.146871121 +0800
+@@ -36,6 +36,7 @@
+ #include "Plugins/Process/Utility/RegisterContextDarwin_i386.h"
+ #include "Plugins/Process/Utility/RegisterContextDarwin_x86_64.h"
+ 
++#define __APPLE__ 1
+ using namespace lldb;
+ using namespace lldb_private;
+ using namespace llvm::MachO;
+diff -Nur llvm-3.3/tools/lldb/source/Plugins/Platform/MacOSX/PlatformRemoteiOS.cpp llvm-3.3.new/tools/lldb/source/Plugins/Platform/MacOSX/PlatformRemoteiOS.cpp
+--- llvm-3.3/tools/lldb/source/Plugins/Platform/MacOSX/PlatformRemoteiOS.cpp	2012-12-11 22:26:08.000000000 +0800
++++ llvm-3.3.new/tools/lldb/source/Plugins/Platform/MacOSX/PlatformRemoteiOS.cpp	2012-12-15 14:00:24.969882221 +0800
+@@ -493,6 +493,7 @@
+ const char *
+ PlatformRemoteiOS::GetDeviceSupportDirectoryForOSVersion()
+ {
++    return "/usr/share/iPhoneSDK";
+     if (m_sdk_sysroot)
+         return m_sdk_sysroot.GetCString();
+ 
+diff -Nur llvm-3.3/tools/lldb/source/Plugins/Process/Utility/RegisterContextDarwin_arm.cpp llvm-3.3.new/tools/lldb/source/Plugins/Process/Utility/RegisterContextDarwin_arm.cpp
+--- llvm-3.3/tools/lldb/source/Plugins/Process/Utility/RegisterContextDarwin_arm.cpp	2012-12-11 22:26:41.000000000 +0800
++++ llvm-3.3.new/tools/lldb/source/Plugins/Process/Utility/RegisterContextDarwin_arm.cpp	2012-12-15 14:00:57.455889271 +0800
+@@ -6,7 +6,7 @@
+ // License. See LICENSE.TXT for details.
+ //
+ //===----------------------------------------------------------------------===//
+-
++#define __APPLE__ 1
+ #if defined(__APPLE__)
+ 
+ #include "RegisterContextDarwin_arm.h"

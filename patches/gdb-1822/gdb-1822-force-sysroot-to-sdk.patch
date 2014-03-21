@@ -1,0 +1,74 @@
+diff -Nur gdb-1822/src/gdb/macosx/macosx-nat-dyld-info.c gdb-1822n/src/gdb/macosx/macosx-nat-dyld-info.c
+--- gdb-1822/src/gdb/macosx/macosx-nat-dyld-info.c	2011-08-26 07:49:52.000000000 +0800
++++ gdb-1822n/src/gdb/macosx/macosx-nat-dyld-info.c	2012-12-19 10:46:00.711118459 +0800
+@@ -20,6 +20,10 @@
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
++#include <stdio.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
+ 
+ #include "macosx-nat-dyld-info.h"
+ #include "macosx-nat-dyld.h"
+@@ -37,6 +41,7 @@
+ #include "objfiles.h"
+ #include "ui-out.h"
+ 
++
+ #include "mach-o.h" /* for BFD mach definitions.  */
+ 
+ const char *
+@@ -494,6 +499,29 @@
+   return e;
+ }
+ 
++
++/* begin UFO editing */
++char * get_sdkpath()
++{
++    char tmpname[PATH_MAX],line[PATH_MAX],*p;
++    FILE* fd;
++
++    sprintf(tmpname,"%s/.iphonesdk",getenv("HOME"));
++    if(!file_exists_p(tmpname))
++        return NULL;
++    fd= fopen(tmpname,"r");
++    fgets(line,PATH_MAX,fd);
++    line[strlen(line)-1] =0;   /* remove \n*/
++    fclose(fd);
++
++    p = strstr(line,"SDK_FULL_PATH=");
++    if(p==NULL)
++        return p;
++    return &line[strlen("SDK_FULL_PATH=")];
++
++}
++/* end UFO editing */
++
+ /* Return the appropriate filename for the given dyld_objfile_entry.
+ 
+    If TYPE is DYLD_ENTRY_FILENAME_BASE, give the base filename as
+@@ -514,6 +542,7 @@
+ {
+   CHECK_FATAL (e != NULL);
+   CHECK_FATAL (e->allocated);
++  char tmpname[PATH_MAX];
+ 
+   const char *name = NULL;
+   char *resolved = NULL;
+@@ -554,6 +583,13 @@
+ 
+   if (name == NULL)
+     return NULL;
++/* force sdk path here*/
++  if(strncmp(name,"/System",7)==0 || strncmp(name,"/usr",4)==0)
++  {
++      sprintf(tmpname,"%s%s",get_sdkpath(),name);
++      name = tmpname;
++      
++  }
+ 
+   if (d == NULL)
+     return name;

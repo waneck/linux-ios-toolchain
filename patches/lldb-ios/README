@@ -1,0 +1,15 @@
+lldb-fix-header.patch:
+missing header include.
+
+
+lldb-should_initialize-m_done-to-false.patch:
+m_done should be initialized before used.
+
+
+==============================================
+If you want to enable remote-ios support.
+you need:
+
+1, lldb-enable-remoteios.patch
+Apply this patch.
+2, copy externalheaders/* to llvm/include.

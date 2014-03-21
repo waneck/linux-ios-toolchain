@@ -1,0 +1,14 @@
+2013-09-23 Cjacker <cjacker@gmail.com>
+	* add a patch from John Roark to handle HEADER_SEARCH_PATHS
+2012-12-10 Cjacker <cjacker@gmail.com>
+	* let getLocalization build with clang/llvm-3.1 release
+	* refector all codes, move common functions to libhelper
+
+2012-12-09 Cjacker <cjacker@gmail.com>
+	* rewrite ios-genLocalizations, use clang lexer to parse source files.
+
+2012-12-08 Cjacker <cjacker@gmail.com>
+	* import plutil of libplist-1.8, rename it to plistutil to avoid
+	name conflict with original libplist.
+	http://cgit.sukimashita.com/libplist.git/
+	* rename iPhoneSDK to ios-clang-wrapper

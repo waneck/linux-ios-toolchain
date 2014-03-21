@@ -1,0 +1,3 @@
+fix sublime input method issue under linux.
+
+LD_PRELOAD=./libsumlime_imfix.so sublime

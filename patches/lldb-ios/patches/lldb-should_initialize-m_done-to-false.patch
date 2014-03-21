@@ -1,0 +1,13 @@
+diff -Nur lldb/tools/driver/Driver.cpp lldbn/tools/driver/Driver.cpp
+--- lldb/tools/driver/Driver.cpp	2012-12-14 18:26:37.000000000 +0800
++++ lldbn/tools/driver/Driver.cpp	2012-12-15 21:54:07.307702543 +0800
+@@ -118,7 +118,8 @@
+     m_editline_reader (),
+     m_io_channel_ap (),
+     m_option_data (),
+-    m_waiting_for_command (false)
++    m_waiting_for_command (false),
++    m_done(false)
+ {
+     // We want to be able to handle CTRL+D in the terminal to have it terminate
+     // certain input

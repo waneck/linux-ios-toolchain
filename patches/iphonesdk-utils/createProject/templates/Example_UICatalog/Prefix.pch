@@ -1,0 +1,226 @@
+//
+// Prefix header for all source files of the 'UICatalog' target in the 'UICatalog' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
+
+
+#ifdef DEBUG
+#define DLog(...) NSLog(__VA_ARGS__)
+#else
+#define DLog(...) /* */;
+#endif
+#define ALog(...) NSLog(__VA_ARGS__)
+
+#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_2_0
+#define kCFCoreFoundationVersionNumber_iPhoneOS_2_0 478.23
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_2_1
+#define kCFCoreFoundationVersionNumber_iPhoneOS_2_1 478.26
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_2_2
+#define kCFCoreFoundationVersionNumber_iPhoneOS_2_2 478.29
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_3_0
+#define kCFCoreFoundationVersionNumber_iPhoneOS_3_0 478.47
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_3_1
+#define kCFCoreFoundationVersionNumber_iPhoneOS_3_1 478.52
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_3_2
+#define kCFCoreFoundationVersionNumber_iPhoneOS_3_2 478.61
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iOS_4_0
+#define kCFCoreFoundationVersionNumber_iOS_4_0 550.32
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iOS_4_1
+#define kCFCoreFoundationVersionNumber_iOS_4_1  550.38
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iOS_4_2
+#define kCFCoreFoundationVersionNumber_iOS_4_2 550.52
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iOS_4_3
+#define kCFCoreFoundationVersionNumber_iOS_4_3 550.52
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iOS_5_0
+#define kCFCoreFoundationVersionNumber_iOS_5_0 675
+#endif
+
+#ifndef kCFCoreFoundationVersionNumber_iOS_5_1
+#define kCFCoreFoundationVersionNumber_iOS_5_1 690.1
+#endif
+
+/* /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOSx.x.sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CFBase.h */
+
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_0
+#define kCFCoreFoundationVersionNumber_iOS_6_0 793
+#endif
+
+#ifndef NSTextAlignmentCenter
+#define NSTextAlignmentCenter UITextAlignmentCenter
+#endif
+#ifndef NSTextAlignmentLeft
+#define NSTextAlignmentLeft UITextAlignmentLeft
+#endif
+#ifndef NSTextAlignmentRight
+#define NSTextAlignmentRight UITextAlignmentRight
+#endif
+#ifndef NSLineBreakByTruncatingTail
+#define NSLineBreakByTruncatingTail UILineBreakModeTailTruncation
+#endif
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_6_0
+#define IF_IOS6_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_6_0) \
+{ \
+__VA_ARGS__ \
+}
+#else
+#define IF_IOS6_OR_GREATER(...)
+#endif
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0
+#define IF_PRE_IOS6(...)
+#else
+#define IF_PRE_IOS6(...) \
+if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iOS_6_0) \
+{ \
+__VA_ARGS__ \
+}
+#endif
+
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_5_0
+#define IF_IOS5_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_5_0) \
+{ \
+__VA_ARGS__ \
+}
+#else
+#define IF_IOS5_OR_GREATER(...)
+#endif
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_5_0
+#define IF_PRE_IOS5(...)
+#else
+#define IF_PRE_IOS5(...) \
+if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iOS_5_0) \
+{ \
+__VA_ARGS__ \
+}
+#endif
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_0
+#define IF_IOS4_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_4_0) \
+{ \
+__VA_ARGS__ \
+}
+#else
+#define IF_IOS4_OR_GREATER(...)
+#endif
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_4_0
+#define IF_PRE_IOS4(...)
+#else
+#define IF_PRE_IOS4(...) \
+if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iOS_4_0) \
+{ \
+__VA_ARGS__ \
+}
+#endif
+
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_2
+#define IF_IOS4_2_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_4_2) \
+{ \
+__VA_ARGS__ \
+}
+#else
+#define IF_IOS4_2_OR_GREATER(...) \
+if (false) \
+{ \
+}
+#endif
+
+
+#define IF_3_2_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_3_2) \
+{ \
+__VA_ARGS__ \
+}
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
+#define IF_3_0_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_3_0) \
+{ \
+__VA_ARGS__ \
+}
+#else
+#define IF_3_0_OR_GREATER(...)
+#endif
+
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_3_0
+#define IF_PRE_IOS3(...)
+#else
+#define IF_PRE_IOS3(...) \
+if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iPhoneOS_3_0) \
+{ \
+__VA_ARGS__ \
+}
+#endif
+
+#define IF_IOS_HAS_COREMIDI(...) IF_IOS4_2_OR_GREATER(__VA_ARGS__)
+
+#ifndef BOOL_ISIPAD
+#define BOOL_ISIPAD
+static BOOL isIPad()
+{
+    IF_3_2_OR_GREATER
+    (
+     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+     {
+         return YES;
+     }
+    );
+    
+    return NO;
+}
+#endif
+
+#ifndef BOOL_ISTALL
+#define BOOL_ISTALL
+static bool IsTall()
+{
+    IF_IOS6_OR_GREATER
+    (
+     if ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) && ([[UIScreen mainScreen] bounds].size.height == 568))
+     {
+         return YES;
+     }
+    );
+    
+    return NO;
+}
+#endif

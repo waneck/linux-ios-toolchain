@@ -1,0 +1,6 @@
+A patch for CF-744.12 from Opensource Apple.
+
+you need:
+libdispatch, libBlocksRuntime, icu 50.1
+
+make -f MakefileLinux
