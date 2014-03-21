@@ -38,4 +38,4 @@ ios-tools-clean:
 
 clean: cctools-clean ios-tools-clean
 
-.PHONY: cctools cctools-clean cctools-install all install no-configure ios-tools ios-tools-install ios-tools-clean
+.PHONY: cctools cctools-clean cctools-install all install no-configure ios-tools ios-tools-install ios-tools-clean clean
