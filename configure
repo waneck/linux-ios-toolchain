@@ -18,4 +18,4 @@ if [ -z "$TARGET" ]; then
 fi
 
 echo "Configuring for $TARGET ..."
-echo 'TARGET="$TARGET"' > configure.mk
+echo "TARGET=\"$TARGET\"" > configure.mk
