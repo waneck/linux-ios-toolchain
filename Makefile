@@ -7,6 +7,8 @@ CCTOOLS=original/cctools-839-ld64-134.9
 
 all: cctools
 
+install: cctools-install
+
 # Assembler and linker
 cctools:
 	cd ${CCTOOLS} && \
@@ -20,4 +22,4 @@ cctools-install: cctools
 cctools-clean:
 	make clean -C ${CCTOOLS}
 
-.PHONY: cctools cctools-clean cctools-install all
+.PHONY: cctools cctools-clean cctools-install all install
