@@ -1,0 +1,12 @@
+diff -Nur llvm-3.3/tools/lldb/source/Core/Mangled.cpp llvm-3.3.new/tools/lldb/source/Core/Mangled.cpp
+--- llvm-3.3/tools/lldb/source/Core/Mangled.cpp	2012-12-11 22:26:58.000000000 +0800
++++ llvm-3.3.new/tools/lldb/source/Core/Mangled.cpp	2012-12-12 10:06:21.254882664 +0800
+@@ -19,7 +19,7 @@
+ #include <cstddef>
+ #include <cxxabi.h>
+ #endif
+-
++#include <stdlib.h>
+ 
+ #include "llvm/ADT/DenseMap.h"
+ 

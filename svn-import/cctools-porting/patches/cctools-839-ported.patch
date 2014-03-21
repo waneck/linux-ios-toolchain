@@ -1,0 +1,602 @@
+diff -Nur cctools-839/ar/archive.c cctools-839n/ar/archive.c
+--- cctools-839/ar/archive.c	2012-12-15 21:37:57.505337041 +0800
++++ cctools-839n/ar/archive.c	2012-12-15 21:38:17.157345525 +0800
+@@ -68,6 +68,7 @@
+ 
+ #include <sys/param.h>
+ #include <sys/stat.h>
++#include <sys/file.h>
+ 
+ #include <ar.h>
+ #include <dirent.h>
+@@ -166,7 +167,6 @@
+ 		/* Locking seems to not be working */
+ 		case ENOTSUP:
+ 		case EHOSTUNREACH:
+-		case EBADRPC:
+ 		default:
+ 			/* Filesystem does not support locking */
+ 			break;
+@@ -321,7 +321,7 @@
+ 		 * things for exact binary equality.
+ 		 */
+ 		if (getenv("ZERO_AR_DATE") == NULL)
+-			tv_sec = (long int)sb->st_mtimespec.tv_sec;
++			tv_sec = (long int)sb->st_mtime;
+ 		else
+ 			tv_sec = (long int)0;
+ 
+diff -Nur cctools-839/ar/misc.c cctools-839n/ar/misc.c
+--- cctools-839/ar/misc.c	2012-12-15 21:37:57.503337039 +0800
++++ cctools-839n/ar/misc.c	2012-12-15 21:38:17.157345525 +0800
+@@ -164,7 +164,7 @@
+ badfmt()
+ {
+ 
+-	errno = EFTYPE;
++	errno = EINVAL;
+ 	err(1, "%s", archive);
+ }
+ 
+diff -Nur cctools-839/as/bignum.h cctools-839n/as/bignum.h
+--- cctools-839/as/bignum.h	2012-12-15 21:37:57.665337203 +0800
++++ cctools-839n/as/bignum.h	2012-12-15 21:38:17.157345525 +0800
+@@ -1,3 +1,6 @@
++#ifndef _BIGNUM_H_
++#define _BIGNUM_H_
++
+ /* bignum.h-arbitrary precision integers
+    Copyright (C) 1987 Free Software Foundation, Inc.
+ 
+@@ -44,3 +47,6 @@
+ /* JF truncated this to get around a problem with GCC */
+ #define	LOG_TO_BASE_2_OF_10	(3.3219280948873623478703194294893901758651)
+ /* WARNING: I haven't checked that the trailing digits are correct! */
++
++#endif // _BIGNUM_H_
++
+diff -Nur cctools-839/as/relax.h cctools-839n/as/relax.h
+--- cctools-839/as/relax.h	2012-12-15 21:37:57.664337202 +0800
++++ cctools-839n/as/relax.h	2012-12-15 21:38:17.158345526 +0800
+@@ -1,3 +1,5 @@
++#ifndef _RELAX_H
++#define _RELAX_H
+ /* The type used for a target address */
+ #ifdef ARCH64
+ typedef uint64_t relax_addressT;
+@@ -48,3 +50,4 @@
+     relax_substateT rlx_more;	  /* Next longer relax-state. */
+ 				  /* 0 means there is no 'next' relax-state. */
+ } relax_typeS;
++#endif
+diff -Nur cctools-839/include/mach/ppc/_structs.h cctools-839n/include/mach/ppc/_structs.h
+--- cctools-839/include/mach/ppc/_structs.h	2012-12-15 21:37:57.701337241 +0800
++++ cctools-839n/include/mach/ppc/_structs.h	2012-12-15 21:38:17.158345526 +0800
+@@ -136,7 +136,7 @@
+ };
+ #endif /* __DARWIN_UNIX03 */
+ 
+-#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
++//#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
+ 
+ #pragma pack(4)			/* Make sure the structure stays as we defined it */
+ 
+@@ -236,7 +236,7 @@
+ 
+ #pragma pack()
+ 
+-#endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
++//#endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
+ 
+ /* This structure should be double-word aligned for performance */
+ 
+@@ -353,7 +353,7 @@
+ };
+ #endif /* __DARWIN_UNIX03 */
+ 
+-#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
++//#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
+ #if __DARWIN_UNIX03
+ #define _STRUCT_PPC_EXCEPTION_STATE64	struct __darwin_ppc_exception_state64
+ _STRUCT_PPC_EXCEPTION_STATE64
+@@ -385,7 +385,7 @@
+ #endif
+ };
+ #endif /* __DARWIN_UNIX03 */
+-#endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
++//#endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
+ 
+ #pragma pack()
+ 
+diff -Nur cctools-839/include/mach/ppc/thread_status.h cctools-839n/include/mach/ppc/thread_status.h
+--- cctools-839/include/mach/ppc/thread_status.h	2012-12-15 21:37:57.702337242 +0800
++++ cctools-839n/include/mach/ppc/thread_status.h	2012-12-15 21:38:17.159345527 +0800
+@@ -70,9 +70,9 @@
+ */
+ 
+ typedef _STRUCT_PPC_THREAD_STATE	ppc_thread_state_t;
+-#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
++//#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
+ typedef _STRUCT_PPC_THREAD_STATE64	ppc_thread_state64_t;
+-#endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
++//#endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
+ typedef _STRUCT_PPC_FLOAT_STATE		ppc_float_state_t;
+ typedef _STRUCT_PPC_VECTOR_STATE	ppc_vector_state_t;
+ 
+diff -Nur cctools-839/libstuff/apple_version.c cctools-839n/libstuff/apple_version.c
+--- cctools-839/libstuff/apple_version.c	1970-01-01 08:00:00.000000000 +0800
++++ cctools-839n/libstuff/apple_version.c	2012-12-15 21:38:17.159345527 +0800
+@@ -0,0 +1,2 @@
++const char apple_version[]= PACKAGE_NAME "-" PACKAGE_VERSION;
++const char ldVersionString[]= "@(#)PROGRAM:ld  PROJECT:" PACKAGE_NAME "-" PACKAGE_VERSION "\n";
+diff -Nur cctools-839/libstuff/emulated.c cctools-839n/libstuff/emulated.c
+--- cctools-839/libstuff/emulated.c	1970-01-01 08:00:00.000000000 +0800
++++ cctools-839n/libstuff/emulated.c	2012-12-15 21:38:17.159345527 +0800
+@@ -0,0 +1,318 @@
++#include <mach/mach.h>
++#include <mach/mach_error.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/mman.h>
++#include <sys/attr.h>
++#include <errno.h>
++#include <inttypes.h>
++#include <mach/mach_time.h>
++#include <mach/mach_host.h>
++#include <mach/host_info.h>
++#include <sys/time.h>
++
++int _NSGetExecutablePath(char *path, unsigned int *size)
++{
++   int bufsize = *size;
++   int ret_size;
++   ret_size = readlink("/proc/self/exe", path, bufsize);
++   if (ret_size != -1)
++   {
++        *size = ret_size;
++        path[ret_size]=0;
++        return 0;
++   }
++   else
++    return -1;
++}
++
++kern_return_t mach_timebase_info( mach_timebase_info_t info) {
++   info->numer = 1;
++   info->denom = 1;
++   return 0;
++}
++
++char *mach_error_string(mach_error_t error_value)
++{
++  return "Unknown mach error";
++}
++
++mach_port_t mach_host_self(void)
++{
++  return 0;
++}
++
++kern_return_t host_info
++(
++ host_t host,
++ host_flavor_t flavor,
++ host_info_t host_info_out,
++ mach_msg_type_number_t *host_info_outCnt
++ )
++{
++  if(flavor == HOST_BASIC_INFO) {
++    host_basic_info_t      basic_info;
++
++    basic_info = (host_basic_info_t) host_info_out;
++    memset(basic_info, 0x00, sizeof(*basic_info));
++    basic_info->cpu_type = EMULATED_HOST_CPU_TYPE;
++    basic_info->cpu_subtype = EMULATED_HOST_CPU_SUBTYPE;
++  }
++
++  return 0;
++}
++
++mach_port_t mach_task_self_ = 0;
++
++kern_return_t mach_port_deallocate
++(
++ ipc_space_t task,
++ mach_port_name_t name
++ )
++{
++  return 0;
++}
++
++kern_return_t vm_allocate
++(
++ vm_map_t target_task,
++ vm_address_t *address,
++ vm_size_t size,
++        int flags
++ )
++{
++
++  vm_address_t addr = 0;
++
++  addr = (vm_address_t)calloc(size, sizeof(char));
++  if(addr == 0)
++    return 1;
++
++  *address = addr;
++
++  return 0;
++}
++
++kern_return_t vm_deallocate
++(
++ vm_map_t target_task,
++ vm_address_t address,
++        vm_size_t size
++ )
++{
++  //  free((void *)address); leak it here
++
++  return 0;
++}
++kern_return_t host_statistics ( host_t host_priv, host_flavor_t flavor, host_info_t host_info_out, mach_msg_type_number_t *host_info_outCnt)
++{
++ return ENOTSUP;
++}
++kern_return_t map_fd(
++                     int fd,
++                     vm_offset_t offset,
++                     vm_offset_t *va,
++                     boolean_t findspace,
++                     vm_size_t size)
++{
++  void *addr = NULL;
++  addr = mmap(0, size, PROT_READ|PROT_WRITE,
++	      MAP_PRIVATE|MAP_FILE, fd, offset);
++  if(addr == (void *)-1) {
++    return 1;
++  }
++  *va = (vm_offset_t)addr;
++  return 0;
++}
++
++uint64_t  mach_absolute_time(void) {
++  uint64_t t = 0;
++  struct timeval tv;
++  if (gettimeofday(&tv,NULL)) return t;
++  t = ((uint64_t)tv.tv_sec << 32)  | tv.tv_usec;
++  return t;
++}
++
++
++#ifndef HAVE_STRMODE
++#include <sys/cdefs.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <string.h>
++
++void
++strmode(/* mode_t */ int mode, char *p)
++{
++     /* print type */
++    switch (mode & S_IFMT) {
++    case S_IFDIR:           /* directory */
++        *p++ = 'd';
++        break;
++    case S_IFCHR:           /* character special */
++        *p++ = 'c';
++        break;
++    case S_IFBLK:           /* block special */
++        *p++ = 'b';
++        break;
++    case S_IFREG:           /* regular */
++        *p++ = '-';
++        break;
++    case S_IFLNK:           /* symbolic link */
++        *p++ = 'l';
++        break;
++    case S_IFSOCK:          /* socket */
++        *p++ = 's';
++        break;
++#ifdef S_IFIFO
++    case S_IFIFO:           /* fifo */
++        *p++ = 'p';
++        break;
++#endif
++#ifdef S_IFWHT
++    case S_IFWHT:           /* whiteout */
++        *p++ = 'w';
++        break;
++#endif
++    default:            /* unknown */
++        *p++ = '?';
++        break;
++    }
++    /* usr */
++    if (mode & S_IRUSR)
++        *p++ = 'r';
++    else
++        *p++ = '-';
++    if (mode & S_IWUSR)
++        *p++ = 'w';
++    else
++        *p++ = '-';
++    switch (mode & (S_IXUSR | S_ISUID)) {
++    case 0:
++        *p++ = '-';
++        break;
++    case S_IXUSR:
++        *p++ = 'x';
++        break;
++    case S_ISUID:
++        *p++ = 'S';
++        break;
++    case S_IXUSR | S_ISUID:
++        *p++ = 's';
++        break;
++    }
++    /* group */
++    if (mode & S_IRGRP)
++        *p++ = 'r';
++    else
++        *p++ = '-';
++    if (mode & S_IWGRP)
++        *p++ = 'w';
++    else
++        *p++ = '-';
++    switch (mode & (S_IXGRP | S_ISGID)) {
++    case 0:
++        *p++ = '-';
++        break;
++    case S_IXGRP:
++        *p++ = 'x';
++        break;
++    case S_ISGID:
++        *p++ = 'S';
++        break;
++    case S_IXGRP | S_ISGID:
++        *p++ = 's';
++        break;
++    }
++    /* other */
++    if (mode & S_IROTH)
++        *p++ = 'r';
++    else
++        *p++ = '-';
++    if (mode & S_IWOTH)
++        *p++ = 'w';
++    else
++        *p++ = '-';
++    switch (mode & (S_IXOTH | S_ISVTX)) {
++    case 0:
++        *p++ = '-';
++        break;
++    case S_IXOTH:
++        *p++ = 'x';
++        break;
++    case S_ISVTX:
++        *p++ = 'T';
++        break;
++    case S_IXOTH | S_ISVTX:
++        *p++ = 't';
++        break;
++    }
++    *p++ = ' ';
++    *p = '\0';
++}
++#endif
++
++int getattrlist(const char* a,void* b,void* c,size_t d,unsigned int e)
++{
++  errno = ENOTSUP;
++  return -1;
++}
++
++vm_size_t       vm_page_size = 4096; // hardcoded to match expectations of darwin
++
++
++
++/*      $OpenBSD: strlcpy.c,v 1.11 2006/05/05 15:27:38 millert Exp $        */
++
++/*
++ * Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++#include <sys/types.h>
++#include <string.h>
++
++
++/*
++ * Copy src to string dst of size siz.  At most siz-1 characters
++ * will be copied.  Always NUL terminates (unless siz == 0).
++ * Returns strlen(src); if retval >= siz, truncation occurred.
++ */
++size_t
++strlcpy(char *dst, const char *src, size_t siz)
++{
++        char *d = dst;
++        const char *s = src;
++        size_t n = siz;
++
++        /* Copy as many bytes as will fit */
++        if (n != 0) {
++                while (--n != 0) {
++                        if ((*d++ = *s++) == '\0')
++                                break;
++                }
++        }
++
++        /* Not enough room in dst, add NUL and traverse rest of src */
++        if (n == 0) {
++                if (siz != 0)
++                        *d = '\0';                /* NUL-terminate dst */
++                while (*s++)
++                        ;
++        }
++
++        return(s - src - 1);        /* count does not include NUL */
++}
++
+diff -Nur cctools-839/libstuff/execute.c cctools-839n/libstuff/execute.c
+--- cctools-839/libstuff/execute.c	2012-12-15 21:37:57.536337074 +0800
++++ cctools-839n/libstuff/execute.c	2012-12-15 21:38:17.159345527 +0800
+@@ -166,7 +166,8 @@
+ 	if(p != NULL)
+ 	    p[1] = '\0';
+ 
+-	return(makestr(prefix, str, NULL));
++    //NOTE, here we add a target alias to command str;
++	return(makestr(prefix, PROGRAM_PREFIX, str, NULL));
+ }
+ 
+ /*
+diff -Nur cctools-839/libstuff/llvm.c cctools-839n/libstuff/llvm.c
+--- cctools-839/libstuff/llvm.c	2012-12-15 21:37:57.553337091 +0800
++++ cctools-839n/libstuff/llvm.c	2012-12-15 21:38:17.159345527 +0800
+@@ -3,6 +3,7 @@
+ #include <libc.h>
+ #include <sys/file.h>
+ #include <dlfcn.h>
++#include <stdint.h>
+ #include "llvm-c/Disassembler.h"
+ #include "stuff/llvm.h"
+ #include "stuff/allocate.h"
+@@ -13,7 +14,7 @@
+  * plan to include it (along with the current libLTO APIs) in a generic
+  * libLLVM.dylib.
+  */
+-#define LIB_LLVM "libLTO.dylib"
++#define LIB_LLVM "libLTO.so"
+ 
+ static int tried_to_load_llvm = 0;
+ static void *llvm_handle = NULL;
+@@ -66,10 +67,7 @@
+ 	    if(llvm_handle == NULL){
+ 		free(llvm_path);
+ 		llvm_path = NULL;
+-		llvm_handle = dlopen("/Applications/Xcode.app/Contents/"
+-				     "Developer/Toolchains/XcodeDefault."
+-				     "xctoolchain/usr/lib/" LIB_LLVM,
+-				     RTLD_NOW);
++		llvm_handle = dlopen("/usr/lib/llvm/" LIB_LLVM, RTLD_NOW);
+ 	    }
+ 	    if(llvm_handle == NULL)
+ 		return(0);
+diff -Nur cctools-839/libstuff/lto.c cctools-839n/libstuff/lto.c
+--- cctools-839/libstuff/lto.c	2012-12-15 21:37:57.531337067 +0800
++++ cctools-839n/libstuff/lto.c	2012-12-15 21:38:17.159345527 +0800
+@@ -109,16 +109,13 @@
+ 	    p = rindex(prefix, '/');
+ 	    if(p != NULL)
+ 		p[1] = '\0';
+-	    lto_path = makestr(prefix, "../lib/libLTO.dylib", NULL);
++	    lto_path = makestr(prefix, "../lib/libLTO.so", NULL);
+ 
+ 	    lto_handle = dlopen(lto_path, RTLD_NOW);
+ 	    if(lto_handle == NULL){
+ 		free(lto_path);
+ 		lto_path = NULL;
+-		lto_handle = dlopen("/Applications/Xcode.app/Contents/"
+-				    "Developer/Toolchains/XcodeDefault."
+-				    "xctoolchain/usr/lib/libLTO.dylib",
+-				    RTLD_NOW);
++		lto_handle = dlopen("/usr/lib/llvm/libLTO.so", RTLD_NOW);
+ 	    }
+ 	    if(lto_handle == NULL)
+ 		return(0);
+diff -Nur cctools-839/misc/libtool.c cctools-839n/misc/libtool.c
+--- cctools-839/misc/libtool.c	2012-12-15 21:37:57.598337136 +0800
++++ cctools-839n/misc/libtool.c	2012-12-15 21:38:17.160345528 +0800
+@@ -369,13 +369,9 @@
+ 	(void)umask(oumask);
+ 
+ 	/* see if this is being run as ranlib */
+-	p = strrchr(argv[0], '/');
+-	if(p != NULL)
+-	    p++;
+-	else
+-	    p = argv[0];
+-	if(strncmp(p, "ranlib", sizeof("ranlib") - 1) == 0)
+-	    cmd_flags.ranlib = TRUE;
++#ifdef RANLIB
++    cmd_flags.ranlib = TRUE;
++#endif
+ 
+ 	/* The default is to used long names */
+ 	cmd_flags.use_long_names = TRUE;
+diff -Nur cctools-839/otool/main.c cctools-839n/otool/main.c
+--- cctools-839/otool/main.c	2012-12-15 21:37:57.270336804 +0800
++++ cctools-839n/otool/main.c	2012-12-15 21:38:47.351350400 +0800
+@@ -281,7 +281,7 @@
+ 	progname = argv[0];
+ 	arch_flags = NULL;
+ 	narch_flags = 0;
+-	all_archs = FALSE;
++	all_archs = TRUE;
+ 	use_member_syntax = TRUE;
+ 	llvm_mc = FALSE;
+ 
+@@ -312,6 +312,7 @@
+ 		    all_archs = TRUE;
+ 		}
+ 		else{
++		    all_archs = FALSE;
+ 		    arch_flags = reallocate(arch_flags,
+ 			    (narch_flags + 1) * sizeof(struct arch_flag));
+ 		    if(get_arch_from_flag(argv[i+1],
+diff -Nur cctools-839/otool/print_objc.c cctools-839n/otool/print_objc.c
+--- cctools-839/otool/print_objc.c	2012-12-15 21:37:57.265336797 +0800
++++ cctools-839n/otool/print_objc.c	2012-12-15 21:38:17.160345528 +0800
+@@ -31,7 +31,7 @@
+ #include "stdio.h"
+ #include "string.h"
+ #include "mach-o/loader.h"
+-#include "objc/objc-runtime.h"
++#include "objc/runtime.h"
+ #include "stuff/allocate.h"
+ #include "stuff/bytesex.h"
+ #include "stuff/symbol.h"
+@@ -635,7 +635,7 @@
+ 			printf("\n");
+ 		    printf("\t\t      isa 0x%08x", objc_class.isa);
+ 
+-		    if(verbose && CLS_GETINFO(&objc_class, CLS_META)){
++		    if(verbose && objc_getMetaClass(objc_class.name)){
+ 			p = get_pointer(objc_class.isa, &left, objc_sections,
+ 					nobjc_sections, &cstring_section);
+ 			if(p != NULL)
+@@ -674,9 +674,9 @@
+ 		    printf("\t\t     info 0x%08x",
+ 			   (unsigned int)objc_class.info);
+ 		    if(verbose){
+-			if(CLS_GETINFO(&objc_class, CLS_CLASS))
++			if(objc_getClass(objc_class.name))
+ 			    printf(" CLS_CLASS\n");
+-			else if(CLS_GETINFO(&objc_class, CLS_META))
++			else if(objc_getMetaClass(objc_class.name))
+ 			    printf(" CLS_META\n");
+ 			else
+ 			    printf("\n");
+@@ -766,7 +766,7 @@
+ 			host_byte_sex, swapped, verbose) == FALSE)
+ 			printf(" (not in an " SEG_OBJC " section)\n");
+ 
+-		    if(CLS_GETINFO((&objc_class), CLS_CLASS)){
++		    if(objc_getClass(objc_class.name)){
+ 			printf("\tMeta Class");
+ 			if(get_objc_class((uint32_t)objc_class.isa,
+ 			     &objc_class, &trunc, objc_sections, nobjc_sections,

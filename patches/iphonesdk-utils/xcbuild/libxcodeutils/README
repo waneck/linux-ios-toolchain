@@ -1,2 +1,0 @@
-lex pbxproj.l
-bison -d pbxproj.y -o pbxproj.cpp

@@ -3,7 +3,7 @@ include configure.mk
 PREFIX=/usr
 LLVM_INCLUDE=/usr/include/llvm-c-3.2
 
-CCTOOLS=original/cctools-839-ld64-134.9
+CCTOOLS=build/cctools-839-ld64-134.9
 
 all: cctools
 

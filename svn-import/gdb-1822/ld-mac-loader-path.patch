@@ -1,0 +1,12 @@
+diff -Nur maloader-master/ld-mac.cc maloader-master.new/ld-mac.cc
+--- maloader-master/ld-mac.cc	2012-12-15 00:30:09.561222516 +0800
++++ maloader-master.new/ld-mac.cc	2012-12-15 00:30:45.973259474 +0800
+@@ -888,7 +888,7 @@
+ }
+ 
+ static bool loadLibMac(const char* mypath) {
+-  if (dlopen("libmac.so", RTLD_LAZY | RTLD_GLOBAL)) {
++  if (dlopen("/lib/libmac.so", RTLD_LAZY | RTLD_GLOBAL)) {
+     return true;
+   }
+ 

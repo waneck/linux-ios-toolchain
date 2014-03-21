@@ -1,0 +1,848 @@
+diff -Nur ld64-128.2.orig/autogen.sh ld64-128.2/autogen.sh
+--- ld64-128.2.orig/autogen.sh	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/autogen.sh	2012-12-13 14:04:54.000000000 +0800
+@@ -0,0 +1,6 @@
++#!/bin/sh
++aclocal
++autoconf
++libtoolize -c -i
++autoheader
++automake -a -c
+diff -Nur ld64-128.2.orig/configure.ac ld64-128.2/configure.ac
+--- ld64-128.2.orig/configure.ac	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/configure.ac	2012-12-14 14:08:49.293661080 +0800
+@@ -0,0 +1,213 @@
++#                                               -*- Autoconf -*-
++# Process this file with autoconf to produce a configure script.
++
++AC_PREREQ([2.68])
++AC_INIT(ld64, 128.2, [cjacker@gmail.com])
++AC_CANONICAL_BUILD
++AC_CANONICAL_HOST
++AC_CANONICAL_TARGET
++
++AC_ARG_PROGRAM
++
++CC=clang
++CXX=clang++
++CPP="clang -E"
++
++AM_INIT_AUTOMAKE([1.10 no-define no-dist-gzip dist-bzip2 tar-ustar])
++AC_CONFIG_MACRO_DIR([m4])
++AM_MAINTAINER_MODE
++
++CC=clang
++CXX=clang++
++
++# Checks for programs.
++AC_CHECK_PROG([CC], [clang],[clang],[clang not found])
++if test "$CC" = "clang not found"; then
++AC_MSG_ERROR("Couldn't find clang.")
++fi
++
++AC_CHECK_PROG([CXX], [clang++],[clang++],[clang++ not found])
++if test "$CXX" = "clang++ not found"; then
++AC_MSG_ERROR("Couldn't find clang++.")
++fi
++
++AC_PROG_CC
++AC_PROG_CXX
++AM_PROG_CC_C_O
++
++if test "$CC" != "clang"; then
++AC_MSG_ERROR("You must use clang to compile it")
++fi
++
++if test "$CXX" != "clang++"; then
++AC_MSG_ERROR("You must use clang to compile it")
++fi
++
++WARNINGS=""
++
++ORIGCFLAGS=$CFLAGS
++CFLAGS="$CFLAGS -Wall"
++AC_MSG_CHECKING([if -Wall is supported])
++AC_COMPILE_IFELSE(
++   [AC_LANG_SOURCE([[const char hw[] = "Hello, World\n";]])],
++   [WARNINGS="$WARNINGS -Wall"
++    AC_MSG_RESULT([yes])],
++   [AC_MSG_RESULT([no])]
++)
++CFLAGS=$ORIGCFLAGS
++
++ORIGCFLAGS=$CFLAGS
++CFLAGS="$CFLAGS -Wno-long-long"
++AC_MSG_CHECKING([if -Wno-long-long is supported])
++AC_COMPILE_IFELSE(
++   [AC_LANG_SOURCE([[const char hw[] = "Hello, World\n";]])],
++   [WARNINGS="$WARNINGS -Wno-long-long"
++    AC_MSG_RESULT([yes])],
++   [AC_MSG_RESULT([no])]
++)
++CFLAGS=$ORIGCFLAGS
++
++ORIGCFLAGS=$CFLAGS
++CFLAGS="$CFLAGS -Wno-import"
++AC_MSG_CHECKING([if -Wno-import is supported])
++AC_COMPILE_IFELSE(
++   [AC_LANG_SOURCE([[const char hw[] = "Hello, World\n";]])],
++   [WARNINGS="$WARNINGS -Wno-import"
++    AC_MSG_RESULT([yes])],
++   [AC_MSG_RESULT([no])]
++)
++CFLAGS=$ORIGCFLAGS
++
++ORIGCFLAGS=$CFLAGS
++CFLAGS="$CFLAGS -Wno-format"
++AC_MSG_CHECKING([if -Wno-format is supported])
++AC_COMPILE_IFELSE(
++   [AC_LANG_SOURCE([[const char hw[] = "Hello, World\n";]])],
++   [WARNINGS="$WARNINGS -Wno-format"
++    AC_MSG_RESULT([yes])],
++   [AC_MSG_RESULT([no])]
++)
++CFLAGS=$ORIGCFLAGS
++
++ORIGCFLAGS=$CFLAGS
++CFLAGS="$CFLAGS -Wno-deprecated"
++AC_MSG_CHECKING([if -Wno-deprecated is supported])
++AC_COMPILE_IFELSE(
++   [AC_LANG_SOURCE([[const char hw[] = "Hello, World\n";]])],
++   [WARNINGS="$WARNINGS -Wno-deprecated"
++    AC_MSG_RESULT([yes])],
++   [AC_MSG_RESULT([no])]
++)
++CFLAGS=$ORIGCFLAGS
++
++ORIGCFLAGS=$CFLAGS
++CFLAGS="$CFLAGS -Wno-unused-variable"
++AC_MSG_CHECKING([if -Wno-unused-variable is supported])
++AC_COMPILE_IFELSE(
++   [AC_LANG_SOURCE([[const char hw[] = "Hello, World\n";]])],
++   [WARNINGS="$WARNINGS -Wno-unused-variable"
++    AC_MSG_RESULT([yes])],
++   [AC_MSG_RESULT([no])]
++)
++CFLAGS=$ORIGCFLAGS
++
++ORIGCFLAGS=$CFLAGS
++CFLAGS="$CFLAGS -Wno-invalid-offsetof"
++AC_MSG_CHECKING([if -Wno-invalid-offsetof is supported])
++AC_COMPILE_IFELSE(
++   [AC_LANG_SOURCE([[const char hw[] = "Hello, World\n";]])],
++   [WARNINGS="$WARNINGS -Wno-invalid-offsetof"
++    AC_MSG_RESULT([yes])],
++   [AC_MSG_RESULT([no])]
++)
++CFLAGS=$ORIGCFLAGS
++
++
++ORIGCFLAGS=$CFLAGS
++CFLAGS="$CFLAGS -Wno-unused-private-field"
++AC_MSG_CHECKING([if -Wno-unused-private-field is supported])
++AC_COMPILE_IFELSE(
++   [AC_LANG_SOURCE([[const char hw[] = "Hello, World\n";]])],
++   [WARNINGS="$WARNINGS -Wno-unused-private-field"
++    AC_MSG_RESULT([yes])],
++   [AC_MSG_RESULT([no])]
++)
++CFLAGS=$ORIGCFLAGS
++
++AC_SUBST([WARNINGS], [$WARNINGS])
++
++# Checks for header files.
++AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h])
++
++LT_PREREQ([2.2.6])
++LT_INIT(disable-static)
++
++# Checks for typedefs, structures, and compiler characteristics.
++#AC_CHECK_HEADER_STDBOOL
++AC_TYPE_INT16_T
++AC_TYPE_INT32_T
++AC_TYPE_PID_T
++AC_TYPE_SIZE_T
++AC_TYPE_UINT16_T
++AC_TYPE_UINT32_T
++AC_TYPE_UINT8_T
++
++# Checks for library functions.
++AC_FUNC_CHOWN
++AC_FUNC_FORK
++AC_CHECK_FUNCS([memset strdup strrchr strtoul])
++
++AC_CHECK_LIB([dl],[dlopen],[
++         DL_LIBS=-ldl
++         ])
++AC_SUBST(DL_LIBS)
++
++AC_CHECK_LIB([pthread],[pthread_create],[
++         PTHREAD_LIBS=-lpthread
++         ])
++AC_SUBST(PTHREAD_LIBS)
++
++AC_CHECK_LIB([uuid],[uuid_generate_random],[
++         UUID_LIBS=-luuid
++         ])
++AC_SUBST(UUID_LIBS)
++
++AC_CHECK_LIB([crypto],[MD5_Init],[
++         CRYPT_LIBS=-lcrypto
++         ])
++AC_SUBST(CRYPT_LIBS)
++
++
++# Check LTO
++AC_CHECK_PROG([llvm_config], [llvm-config],[yes],[no])
++if test "x$llvm-config" = "xno"; then
++        AC_MSG_ERROR("Could not find llvm-config.")
++else
++        LLVM_LIBDIR=`llvm-config --libdir`
++        if test -f $LLVM_LIBDIR/libLTO.so;then
++                LTO_LIBS="-L`llvm-config --libdir` -lLTO"
++                LTO_DEFS="-DLTO_SUPPORT=1"
++        fi
++fi
++
++AC_SUBST(LTO_LIBS)
++AC_SUBST(LTO_DEFS)
++
++
++AC_C_BIGENDIAN([AC_SUBST([ENDIAN_FLAG],[-D__BIG_ENDIAN__=1])],
++           [AC_SUBST([ENDIAN_FLAG],[-D__LITTLE_ENDIAN__=1])])
++
++if test "$target_alias"; then
++AC_SUBST([PROGRAM_PREFIX], ['${target_alias}-'])
++fi
++
++
++AC_OUTPUT([
++	   Makefile
++	   src/Makefile
++	   src/3rd/Makefile
++	   src/ld/Makefile
++	   src/ld/parsers/Makefile
++	   src/ld/passes/Makefile
++       src/other/Makefile
++])
+diff -Nur ld64-128.2.orig/Makefile.am ld64-128.2/Makefile.am
+--- ld64-128.2.orig/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/Makefile.am	2012-12-13 14:04:26.000000000 +0800
+@@ -0,0 +1,2 @@
++SUBDIRS = src
++ACLOCAL_AMFLAGS = -I m4
+diff -Nur ld64-128.2.orig/src/3rd/helper.c ld64-128.2/src/3rd/helper.c
+--- ld64-128.2.orig/src/3rd/helper.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/helper.c	2012-12-14 14:06:38.920620743 +0800
+@@ -0,0 +1,81 @@
++#include <unistd.h> 
++#include <mach/mach.h>
++#include <mach/mach_error.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <sys/types.h>
++#include <sys/mman.h>
++#include <sys/attr.h>
++#include <errno.h>
++#include <inttypes.h>
++#include <mach/mach_time.h>
++#include <mach/mach_host.h>
++#include <mach/host_info.h>
++#include <sys/time.h>
++#include <assert.h>
++#include "helper.h"
++
++const char ldVersionString[] = "128.2\n";
++
++
++void __assert_rtn(const char *func, const char *file, int line, const char *msg)
++{
++    __assert(msg, file, line);
++}
++
++
++int _NSGetExecutablePath(char *path, unsigned int *size)
++{
++   int bufsize = *size;
++   int ret_size;
++   char *localpath = (char*)malloc(bufsize);
++   bzero(localpath,bufsize);
++   ret_size = readlink("/proc/self/exe", localpath, bufsize);
++   if (ret_size != -1)
++   {
++        *size = ret_size;
++        strcpy(path,localpath);
++        return 0;
++   }
++   else
++    return -1;
++}
++
++int _dyld_find_unwind_sections(void* i, struct dyld_unwind_sections* sec)
++{
++    return 0;
++}
++
++mach_port_t mach_host_self(void)
++{
++  return 0;
++}
++
++kern_return_t host_statistics ( host_t host_priv, host_flavor_t flavor, host_info_t host_info_out, mach_msg_type_number_t *host_info_outCnt)
++{
++ return ENOTSUP;
++}
++
++uint64_t  mach_absolute_time(void) {
++  uint64_t t = 0;
++  struct timeval tv;
++  if (gettimeofday(&tv,NULL)) return t;
++  t = ((uint64_t)tv.tv_sec << 32)  | tv.tv_usec;
++  return t;
++}
++
++kern_return_t     mach_timebase_info( mach_timebase_info_t info) {
++   info->numer = 1;
++   info->denom = 1;
++   return 0;
++}
++
++int32_t OSAtomicAdd32( int32_t theAmount, volatile int32_t *theValue )
++{
++   __sync_fetch_and_add(theValue, theAmount);
++   return *theValue; 
++}
++int64_t OSAtomicAdd64(int64_t theAmount, volatile int64_t *theValue) {
++   __sync_fetch_and_add(theValue, theAmount);
++   return *theValue; 
++}
+diff -Nur ld64-128.2.orig/src/3rd/helper.h ld64-128.2/src/3rd/helper.h
+--- ld64-128.2.orig/src/3rd/helper.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/helper.h	2012-12-14 14:07:20.743633976 +0800
+@@ -0,0 +1,33 @@
++#ifndef _HELPER_H
++#define _HELPER_H
++
++#include <mach/mach_time.h>
++#include <mach/mach_host.h>
++#include <mach/host_info.h>
++#include <sys/time.h>
++#ifndef __USE_GNU
++#define __USE_GNU
++#include <dlfcn.h>
++#endif
++struct dyld_unwind_sections
++{
++    const struct mach_header*       mh;
++    const void*                     dwarf_section;
++    intptr_t                       dwarf_section_length;
++    const void*                     compact_unwind_section;
++    intptr_t                       compact_unwind_section_length;
++};
++
++typedef Dl_info dl_info;
++
++int _NSGetExecutablePath(char *path, unsigned int *size);
++
++int _dyld_find_unwind_sections(void* i, struct dyld_unwind_sections* sec);
++
++mach_port_t mach_host_self(void);
++
++kern_return_t host_statistics ( host_t host_priv, host_flavor_t flavor, host_info_t host_info_out, mach_msg_type_number_t *host_info_outCnt);
++
++uint64_t mach_absolute_time(void);
++
++#endif
+diff -Nur ld64-128.2.orig/src/3rd/Makefile.am ld64-128.2/src/3rd/Makefile.am
+--- ld64-128.2.orig/src/3rd/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/Makefile.am	2012-12-14 14:06:24.608615375 +0800
+@@ -0,0 +1,9 @@
++noinst_LTLIBRARIES = libhelper.la
++noinst_HEADERS = helper.h strlcat.h strlcpy.h qsort_r.h
++libhelper_la_CFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/include/foreign $(ENDIAN_FLAG)
++
++libhelper_la_SOURCES =  \
++	helper.c  \
++	qsort_r.c  \
++	strlcat.c  \
++	strlcpy.c
+diff -Nur ld64-128.2.orig/src/3rd/qsort_r.c ld64-128.2/src/3rd/qsort_r.c
+--- ld64-128.2.orig/src/3rd/qsort_r.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/qsort_r.c	2012-12-14 14:02:19.493531020 +0800
+@@ -0,0 +1,23 @@
++#include "qsort_r.h"
++#include <stdlib.h>
++
++void *_qsort_thunk = NULL;
++int (*_qsort_saved_func)(void *, const void *, const void *) = NULL;
++
++static int _qsort_comparator(const void *a, const void *b);
++
++static int _qsort_comparator(const void *a, const void *b)
++{
++  return _qsort_saved_func(_qsort_thunk, a, b);
++}
++
++void
++qsort_r_local(void *base, size_t nmemb, size_t size, void *thunk,
++    int (*compar)(void *, const void *, const void *))
++{
++  _qsort_thunk = thunk;
++  _qsort_saved_func = compar;
++
++  qsort(base, nmemb, size, _qsort_comparator);
++}
++
+diff -Nur ld64-128.2.orig/src/3rd/qsort_r.h ld64-128.2/src/3rd/qsort_r.h
+--- ld64-128.2.orig/src/3rd/qsort_r.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/qsort_r.h	2012-12-14 14:02:19.493531020 +0800
+@@ -0,0 +1,13 @@
++#ifndef _QSORT_R_H
++#define _QSORT_R_H
++#include <sys/types.h>
++
++#if defined(__cplusplus)
++extern "C" {
++#endif
++void qsort_r_local(void *base, size_t nmemb, size_t size, void *thunk, int (*compar)(void *, const void *, const void *));
++#if defined(__cplusplus)
++};
++#endif
++
++#endif
+diff -Nur ld64-128.2.orig/src/3rd/strlcat.c ld64-128.2/src/3rd/strlcat.c
+--- ld64-128.2.orig/src/3rd/strlcat.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/strlcat.c	2012-12-14 14:02:19.494531020 +0800
+@@ -0,0 +1,30 @@
++#include <sys/types.h>
++#include <string.h>
++
++size_t strlcat(char *dst, const char *src, size_t siz)
++{
++   char *d = dst;
++   const char *s = src;
++   size_t n = siz;
++   size_t dlen;
++
++   /* Find the end of dst and adjust bytes left but don't go past end */
++   while (n-- != 0 && *d != '\0')
++       d++;
++   dlen = d - dst;
++   n = siz - dlen;
++
++   if (n == 0)
++       return(dlen + strlen(s));
++   while (*s != '\0') {
++       if (n != 1) {
++           *d++ = *s;
++           n--;
++       }
++       s++;
++   }
++   *d = '\0';
++
++   return(dlen + (s - src));   /* count does not include NUL */
++}
++
+diff -Nur ld64-128.2.orig/src/3rd/strlcat.h ld64-128.2/src/3rd/strlcat.h
+--- ld64-128.2.orig/src/3rd/strlcat.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/strlcat.h	2012-12-14 14:02:19.494531020 +0800
+@@ -0,0 +1,16 @@
++#ifndef STRLCAT_H
++#define STRLCAT_H
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++#include <stddef.h>
++
++size_t strlcat(char *dst, const char *src, size_t siz);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif
++
+diff -Nur ld64-128.2.orig/src/3rd/strlcpy.c ld64-128.2/src/3rd/strlcpy.c
+--- ld64-128.2.orig/src/3rd/strlcpy.c	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/strlcpy.c	2012-12-14 14:02:19.494531020 +0800
+@@ -0,0 +1,56 @@
++/*      $OpenBSD: strlcpy.c,v 1.11 2006/05/05 15:27:38 millert Exp $        */
++
++/*
++ * Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++#include <sys/types.h>
++#include <string.h>
++
++#ifndef HAVE_STRLCPY
++
++/*
++ * Copy src to string dst of size siz.  At most siz-1 characters
++ * will be copied.  Always NUL terminates (unless siz == 0).
++ * Returns strlen(src); if retval >= siz, truncation occurred.
++ */
++size_t
++strlcpy(char *dst, const char *src, size_t siz)
++{
++        char *d = dst;
++        const char *s = src;
++        size_t n = siz;
++
++        /* Copy as many bytes as will fit */
++        if (n != 0) {
++                while (--n != 0) {
++                        if ((*d++ = *s++) == '\0')
++                                break;
++                }
++        }
++
++        /* Not enough room in dst, add NUL and traverse rest of src */
++        if (n == 0) {
++                if (siz != 0)
++                        *d = '\0';                /* NUL-terminate dst */
++                while (*s++)
++                        ;
++        }
++
++        return(s - src - 1);        /* count does not include NUL */
++}
++
++#endif
++
+diff -Nur ld64-128.2.orig/src/3rd/strlcpy.h ld64-128.2/src/3rd/strlcpy.h
+--- ld64-128.2.orig/src/3rd/strlcpy.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/3rd/strlcpy.h	2012-12-14 14:02:19.494531020 +0800
+@@ -0,0 +1,16 @@
++#ifndef STRLCPY_H
++#define STRLCPY_H
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++#include <stddef.h>
++
++size_t strlcpy(char *dst, const char *src, size_t siz);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif
++
+diff -Nur ld64-128.2.orig/src/abstraction/MachOFileAbstraction.hpp ld64-128.2/src/abstraction/MachOFileAbstraction.hpp
+--- ld64-128.2.orig/src/abstraction/MachOFileAbstraction.hpp	2012-12-14 14:01:23.628504350 +0800
++++ ld64-128.2/src/abstraction/MachOFileAbstraction.hpp	2012-12-14 14:02:19.496531022 +0800
+@@ -231,6 +231,7 @@
+ 	{ "armv7", "thumbv7-",  CPU_SUBTYPE_ARM_V7,    true },
+ 	{ "armv7f", "thumbv7f-", CPU_SUBTYPE_ARM_V7F,   true },
+ 	{ "armv7k", "thumbv7k-", CPU_SUBTYPE_ARM_V7K,   true },
++	{ "armv7s", "thumbv7s-", CPU_SUBTYPE_ARM_V7S,   true },
+ 	{ 0, NULL, false }
+ };
+ 
+diff -Nur ld64-128.2.orig/src/Availability.h ld64-128.2/src/Availability.h
+--- ld64-128.2.orig/src/Availability.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/Availability.h	2012-12-14 14:02:19.496531022 +0800
+@@ -0,0 +1 @@
++//fake headers
+diff -Nur ld64-128.2.orig/src/compile_stubs.h ld64-128.2/src/compile_stubs.h
+--- ld64-128.2.orig/src/compile_stubs.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/compile_stubs.h	2012-12-14 14:02:19.496531022 +0800
+@@ -0,0 +1,4 @@
++#include "configure.h"
++//compile_stubs.h generated by xcode to dump compile_subs to a string.
++//here we fake one.
++static const char *compile_stubs ="Empty"; 
+diff -Nur ld64-128.2.orig/src/configure.h ld64-128.2/src/configure.h
+--- ld64-128.2.orig/src/configure.h	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/configure.h	2012-12-14 14:02:19.497531023 +0800
+@@ -0,0 +1,35 @@
++#ifndef _CONFIGURE_H
++#define _CONFIGURE_H
++#include <sys/param.h>
++#include <limits.h>
++#include <unistd.h>
++#include <stddef.h>
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <dlfcn.h>
++
++#include "strlcat.h"
++#include "strlcpy.h"
++#include "helper.h"
++
++#define CPU_SUBTYPE_X86_ALL     ((cpu_subtype_t)3)
++
++
++#define SUPPORT_ARCH_i386  1
++#define SUPPORT_ARCH_x86_64  1
++#define SUPPORT_ARCH_armv4t  1
++#define SUPPORT_ARCH_armv5  1
++#define SUPPORT_ARCH_armv6  1
++#define SUPPORT_ARCH_armv7  1
++#define SUPPORT_ARCH_armv7f  1
++#define SUPPORT_ARCH_armv7k  1
++#define SUPPORT_ARCH_armv7s  1
++#define ALL_SUPPORTED_ARCHS  "i386 x86_64 armv4t armv5 armv6 armv7 armv7f armv7k armv7s"
++
++#define HW_NCPU      3
++#define CTL_HW      6
++#define ARG_MAX       131072
++
++#endif
+diff -Nur ld64-128.2.orig/src/ld/InputFiles.cpp ld64-128.2/src/ld/InputFiles.cpp
+--- ld64-128.2.orig/src/ld/InputFiles.cpp	2012-12-14 14:01:23.626504348 +0800
++++ ld64-128.2/src/ld/InputFiles.cpp	2012-12-14 14:02:19.497531023 +0800
+@@ -297,7 +297,7 @@
+ 			throwf("file was built for %s which is not the architecture being linked (%s)", fileArch(p, len), _options.architectureName());
+ 		}
+ 		else {
+-			const char* libLTO = "libLTO.dylib";
++			const char* libLTO = "libLTO.so";
+ 			char ldPath[PATH_MAX];
+ 			char tmpPath[PATH_MAX];
+ 			char libLTOPath[PATH_MAX];
+@@ -306,7 +306,7 @@
+ 				if ( realpath(ldPath, tmpPath) != NULL ) {
+ 					char* lastSlash = strrchr(tmpPath, '/');
+ 					if ( lastSlash != NULL )
+-						strcpy(lastSlash, "/../lib/libLTO.dylib");
++						strcpy(lastSlash, "/../lib/llvm/libLTO.so");
+ 					libLTO = tmpPath;
+ 					if ( realpath(tmpPath, libLTOPath) != NULL ) 
+ 						libLTO = libLTOPath;
+diff -Nur ld64-128.2.orig/src/ld/ld.cpp ld64-128.2/src/ld/ld.cpp
+--- ld64-128.2.orig/src/ld/ld.cpp	2012-12-14 14:01:23.626504348 +0800
++++ ld64-128.2/src/ld/ld.cpp	2012-12-14 14:02:19.498531024 +0800
+@@ -23,7 +23,7 @@
+  */
+  
+ // start temp HACK for cross builds
+-extern "C" double log2 ( double );
++//extern "C" double log2 ( double );
+ //#define __MATH__
+ // end temp HACK for cross builds
+ 
+@@ -703,6 +703,11 @@
+ 			fprintf(stderr, "processed %3u dylib files\n", inputFiles._totalDylibsLoaded);
+ 			fprintf(stderr, "wrote output file            totaling %15s bytes\n", commatize(out.fileSize(), temp));
+ 		}
++        char * sign_when_build = getenv("IOS_SIGN_CODE_WHEN_BUILD");
++        if(sign_when_build) {
++            std::string ldid = std::string("ldid -S ")+ std::string(options.outputFilePath());
++            system(ldid.c_str());
++        }
+ 		// <rdar://problem/6780050> Would like linker warning to be build error.
+ 		if ( options.errorBecauseOfWarnings() ) {
+ 			fprintf(stderr, "ld: fatal warning(s) induced error (-fatal_warnings)\n");
+diff -Nur ld64-128.2.orig/src/ld/ld.hpp ld64-128.2/src/ld/ld.hpp
+--- ld64-128.2.orig/src/ld/ld.hpp	2012-12-14 14:01:23.627504349 +0800
++++ ld64-128.2/src/ld/ld.hpp	2012-12-14 14:02:19.499531025 +0800
+@@ -30,6 +30,7 @@
+ #include <math.h>
+ #include <unistd.h>
+ #include <assert.h>
++#include "configure.h"
+ 
+ #include <vector>
+ #include <set>
+diff -Nur ld64-128.2.orig/src/ld/Makefile.am ld64-128.2/src/ld/Makefile.am
+--- ld64-128.2.orig/src/ld/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/ld/Makefile.am	2012-12-14 14:08:36.297657695 +0800
+@@ -0,0 +1,21 @@
++SUBDIRS = parsers passes
++
++bin_PROGRAMS = ld
++ld_LDADD =  \
++        $(top_srcdir)/src/3rd/libhelper.la  \
++		$(top_srcdir)/src/ld/parsers/libParsers.la \
++		$(top_srcdir)/src/ld/passes/libPasses.la \
++		$(DL_LIBS) $(PTHREAD_LIBS) $(CRYPT_LIBS) $(UUID_LIBS) $(LTO_LIBS)
++
++ld_CXXFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/abstraction/ -I$(top_srcdir)/include/foreign -I$(top_srcdir)/src/ld -I$(top_srcdir)/src/3rd -D__DARWIN_UNIX03 -I$(top_srcdir)/src -I$(top_srcdir)/src/ld/parsers -I$(top_srcdir)/src/ld/passes $(WARNINGS) $(LTO_DEFS) -DPROGRAM_PREFIX="\"$(PROGRAM_PREFIX)\""
++
++ld_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/abstraction/ -I$(top_srcdir)/include/foreign -I$(top_srcdir)/src/ld -I$(top_srcdir)/src/3rd -D__DARWIN_UNIX03 -I$(top_srcdir)/src -I$(top_srcdir)/src/ld/parsers -I$(top_srcdir)/src/ld/passes $(WARNINGS) $(LTO_DEFS) -DPROGRAM_PREFIX="\"$(PROGRAM_PREFIX)\""
++
++ld_SOURCES =  \
++	debugline.c  \
++	InputFiles.cpp  \
++	ld.cpp  \
++	Options.cpp  \
++	OutputFile.cpp  \
++	Resolver.cpp  \
++	SymbolTable.cpp
+diff -Nur ld64-128.2.orig/src/ld/Options.cpp ld64-128.2/src/ld/Options.cpp
+--- ld64-128.2.orig/src/ld/Options.cpp	2012-12-14 14:01:23.628504350 +0800
++++ ld64-128.2/src/ld/Options.cpp	2012-12-14 14:02:19.504531030 +0800
+@@ -4047,7 +4047,7 @@
+ 
+ void Options::gotoClassicLinker(int argc, const char* argv[])
+ {
+-	argv[0] = "ld_classic";
++	argv[0] = PROGRAM_PREFIX "ld_classic";
+ 	// ld_classic does not support -iphoneos_version_min, so change
+ 	for(int j=0; j < argc; ++j) {
+ 		if ( (strcmp(argv[j], "-iphoneos_version_min") == 0) || (strcmp(argv[j], "-ios_version_min") == 0) ) {
+diff -Nur ld64-128.2.orig/src/ld/parsers/libunwind/AddressSpace.hpp ld64-128.2/src/ld/parsers/libunwind/AddressSpace.hpp
+--- ld64-128.2.orig/src/ld/parsers/libunwind/AddressSpace.hpp	2012-12-14 14:01:23.626504348 +0800
++++ ld64-128.2/src/ld/parsers/libunwind/AddressSpace.hpp	2012-12-14 14:02:19.499531025 +0800
+@@ -43,7 +43,7 @@
+ #include "libunwind.h"
+ #include "InternalMacros.h"
+ #include "dwarf2.h"
+-
++#include "configure.h"
+ 
+ #if 0
+ #if __i386__ || __x86_64__ 
+diff -Nur ld64-128.2.orig/src/ld/parsers/libunwind/DwarfInstructions.hpp ld64-128.2/src/ld/parsers/libunwind/DwarfInstructions.hpp
+--- ld64-128.2.orig/src/ld/parsers/libunwind/DwarfInstructions.hpp	2012-12-14 14:01:23.626504348 +0800
++++ ld64-128.2/src/ld/parsers/libunwind/DwarfInstructions.hpp	2012-12-14 14:02:19.500531026 +0800
+@@ -44,6 +44,8 @@
+ #include "Registers.hpp"
+ #include "DwarfParser.hpp"
+ #include "InternalMacros.h"
++#include "helper.h"
++
+ //#include "CompactUnwinder.hpp"
+ 
+ #define EXTRACT_BITS(value, mask) \
+diff -Nur ld64-128.2.orig/src/ld/parsers/macho_relocatable_file.cpp ld64-128.2/src/ld/parsers/macho_relocatable_file.cpp
+--- ld64-128.2.orig/src/ld/parsers/macho_relocatable_file.cpp	2012-12-14 14:01:23.625504347 +0800
++++ ld64-128.2/src/ld/parsers/macho_relocatable_file.cpp	2012-12-14 14:02:19.503531029 +0800
+@@ -49,7 +49,7 @@
+ #include "Architectures.hpp"
+ #include "ld.hpp"
+ #include "macho_relocatable_file.h"
+-
++#include "qsort_r.h"
+ 
+ 
+ extern void throwf(const char* format, ...) __attribute__ ((noreturn,format(printf, 1, 2)));
+@@ -1824,7 +1824,7 @@
+ 	// sort by symbol table address
+ 	for (uint32_t i=0; i < _machOSectionsCount; ++i)
+ 		array[i] = i;
+-	::qsort_r(array, _machOSectionsCount, sizeof(uint32_t), this, &sectionIndexSorter);
++	::qsort_r_local(array, _machOSectionsCount, sizeof(uint32_t), this, &sectionIndexSorter);
+ 
+ 	if ( log ) {
+ 		fprintf(stderr, "sorted sections:\n");
+@@ -1908,7 +1908,7 @@
+ 	
+ 	// sort by symbol table address
+ 	ParserAndSectionsArray extra = { this, sectionArray };
+-	::qsort_r(array, _symbolsInSections, sizeof(uint32_t), &extra, &symbolIndexSorter);
++	::qsort_r_local(array, _symbolsInSections, sizeof(uint32_t), &extra, &symbolIndexSorter);
+ 	
+ 	// look for two symbols at same address
+ 	_overlappingSymbols = false;
+diff -Nur ld64-128.2.orig/src/ld/parsers/Makefile.am ld64-128.2/src/ld/parsers/Makefile.am
+--- ld64-128.2.orig/src/ld/parsers/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/ld/parsers/Makefile.am	2012-12-14 14:08:05.642649098 +0800
+@@ -0,0 +1,18 @@
++noinst_LTLIBRARIES = libParsers.la
++noinst_HEADERS =  \
++	archive_file.h  \
++	lto_file.h  \
++	macho_dylib_file.h  \
++	macho_relocatable_file.h  \
++	opaque_section_file.h 
++
++libParsers_la_LIBADD = $(top_srcdir)/src/3rd/libhelper.la
++
++libParsers_la_CXXFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/abstraction/ -I$(top_srcdir)/include/foreign -I$(top_srcdir)/src/ld -I$(top_srcdir)/src/3rd -D__DARWIN_UNIX03 -I$(top_srcdir)/src $(WARNINGS) $(LTO_DEFS) $(ENDIAN_FLAGS)
++
++libParsers_la_SOURCES =  \
++	archive_file.cpp  \
++	lto_file.cpp  \
++	macho_dylib_file.cpp  \
++	macho_relocatable_file.cpp  \
++	opaque_section_file.cpp
+diff -Nur ld64-128.2.orig/src/ld/passes/Makefile.am ld64-128.2/src/ld/passes/Makefile.am
+--- ld64-128.2.orig/src/ld/passes/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/ld/passes/Makefile.am	2012-12-14 14:07:57.154645962 +0800
+@@ -0,0 +1,27 @@
++noinst_LTLIBRARIES = libPasses.la
++noinst_HEADERS =  \
++	branch_island.h  \
++	branch_shim.h  \
++	compact_unwind.h  \
++	dtrace_dof.h  \
++	dylibs.h  \
++	got.h  \
++	huge.h  \
++	objc.h  \
++	order.h  \
++	tlvp.h
++
++libPasses_la_CXXFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/abstraction/ -I$(top_srcdir)/include/foreign -I$(top_srcdir)/src/ld -I$(top_srcdir)/src/3rd -D__DARWIN_UNIX03 -I$(top_srcdir)/src $(WARNINGS)  $(LTO_DEFS) $(ENDIAN_FLAGS)
++
++libPasses_la_SOURCES =  \
++	branch_island.cpp  \
++	branch_shim.cpp  \
++	compact_unwind.cpp  \
++	dtrace_dof.cpp  \
++	dylibs.cpp  \
++	got.cpp  \
++	huge.cpp  \
++	objc.cpp  \
++	order.cpp  \
++	tlvp.cpp \
++	stubs/stubs.cpp 
+diff -Nur ld64-128.2.orig/src/Makefile.am ld64-128.2/src/Makefile.am
+--- ld64-128.2.orig/src/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/Makefile.am	2012-12-13 15:10:05.000000000 +0800
+@@ -0,0 +1 @@
++SUBDIRS = 3rd ld other 
+diff -Nur ld64-128.2.orig/src/other/dyldinfo.cpp ld64-128.2/src/other/dyldinfo.cpp
+--- ld64-128.2.orig/src/other/dyldinfo.cpp	2012-12-14 14:01:23.620504346 +0800
++++ ld64-128.2/src/other/dyldinfo.cpp	2012-12-14 14:02:19.503531029 +0800
+@@ -38,6 +38,8 @@
+ #include "MachOFileAbstraction.hpp"
+ #include "Architectures.hpp"
+ #include "MachOTrie.hpp"
++#include "strlcat.h"
++#include "strlcpy.h"
+ 
+ static bool printRebase = false;
+ static bool printBind = false;
+diff -Nur ld64-128.2.orig/src/other/Makefile.am ld64-128.2/src/other/Makefile.am
+--- ld64-128.2.orig/src/other/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ ld64-128.2/src/other/Makefile.am	2012-12-14 14:08:23.088653766 +0800
+@@ -0,0 +1,18 @@
++bin_PROGRAMS = dyldinfo ObjectDump unwinddump machochecker 
++
++AM_CXXFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/abstraction/ -I$(top_srcdir)/include/foreign -I$(top_srcdir)/src/ld -I$(top_srcdir)/src/3rd -D__DARWIN_UNIX03 -I$(top_srcdir)/src -I$(top_srcdir)/src/ld/parsers -I$(top_srcdir)/src/ld/passes $(WARNINGS) $(LTO_DEFS) $(ENDIAN_FLAGS)
++
++AM_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/abstraction/ -I$(top_srcdir)/include/foreign -I$(top_srcdir)/src/ld -I$(top_srcdir)/src/3rd -D__DARWIN_UNIX03 -I$(top_srcdir)/src -I$(top_srcdir)/src/ld/parsers -I$(top_srcdir)/src/ld/passes $(WARNINGS)  $(LTO_DEFS) $(ENDIAN_FLAGS)
++
++unwinddump_SOURCES = unwinddump.cpp
++machochecker_SOURCES = machochecker.cpp
++ObjectDump_SOURCES = ObjectDump.cpp $(top_srcdir)/src/ld/debugline.c 
++ObjectDump_LDADD =  \
++	$(top_srcdir)/src/ld/parsers/libParsers.la $(LTO_LIBS)  
++
++
++dyldinfo_SOURCES =  dyldinfo.cpp
++dyldinfo_LDADD =  \
++	$(top_srcdir)/src/3rd/libhelper.la
++
++

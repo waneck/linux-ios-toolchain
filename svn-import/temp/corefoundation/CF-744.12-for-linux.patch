@@ -1,0 +1,151 @@
+diff -Nur CF-744.12/CFBase.h CF-744.12n/CFBase.h
+--- CF-744.12/CFBase.h	2012-12-17 17:36:24.596057927 +0800
++++ CF-744.12n/CFBase.h	2012-12-17 17:36:12.904046059 +0800
+@@ -132,7 +132,7 @@
+ 
+ #endif
+ 
+-#if __has_feature(enumerator_attributes) && __has_attribute(availability)
++#if __has_feature(enumerator_attributes) && __has_attribute(availability) && !DEPLOYMENT_TARGET_LINUX
+ #define CF_ENUM_AVAILABLE(_mac, _ios) __OSX_AVAILABLE_STARTING(__MAC_##_mac, __IPHONE_##_ios)
+ #define CF_ENUM_AVAILABLE_MAC(_mac) __OSX_AVAILABLE_STARTING(__MAC_##_mac, __IPHONE_NA)
+ #define CF_ENUM_AVAILABLE_IOS(_ios) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_##_ios)
+diff -Nur CF-744.12/CFBurstTrie.c CF-744.12n/CFBurstTrie.c
+--- CF-744.12/CFBurstTrie.c	2012-12-17 17:36:24.597057928 +0800
++++ CF-744.12n/CFBurstTrie.c	2012-12-17 17:36:12.905046060 +0800
+@@ -36,7 +36,7 @@
+ #include <fcntl.h>
+ #include <sys/stat.h>
+ #include <limits.h>
+-#if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
++#if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI ||DEPLOYMENT_TARGET_LINUX
+ #include <unistd.h>
+ #include <sys/param.h>
+ #include <sys/mman.h>
+diff -Nur CF-744.12/CFPlatform.c CF-744.12n/CFPlatform.c
+--- CF-744.12/CFPlatform.c	2012-12-17 17:36:24.597057928 +0800
++++ CF-744.12n/CFPlatform.c	2012-12-17 17:36:12.904046059 +0800
+@@ -1077,6 +1077,11 @@
+     return __sync_bool_compare_and_swap(theValue, oldValue, newValue);
+ }
+ 
++bool OSAtomicCompareAndSwap64Barrier(int64_t oldValue, int64_t newValue, volatile int64_t *theValue) {
++    return __sync_bool_compare_and_swap(theValue, oldValue, newValue);
++}
++
++
+ int32_t OSAtomicDecrement32Barrier(volatile int32_t *dst)
+ {
+     return OSAtomicAdd32Barrier(-1, dst);
+diff -Nur CF-744.12/CFPriv.h CF-744.12n/CFPriv.h
+--- CF-744.12/CFPriv.h	2012-12-17 17:36:24.597057928 +0800
++++ CF-744.12n/CFPriv.h	2012-12-17 17:36:12.902046057 +0800
+@@ -40,6 +40,7 @@
+ #include <CoreFoundation/CFLocale.h>
+ #include <CoreFoundation/CFDate.h>
+ #include <CoreFoundation/CFSet.h>
++#include <CoreFoundation/CFBundle.h>
+ #include <math.h>
+ 
+ 
+diff -Nur CF-744.12/CFPropertyList.c CF-744.12n/CFPropertyList.c
+--- CF-744.12/CFPropertyList.c	2012-12-17 17:36:24.598057929 +0800
++++ CF-744.12n/CFPropertyList.c	2012-12-17 17:36:12.904046059 +0800
+@@ -48,6 +48,7 @@
+ #include <stdlib.h>
+ #include <math.h>
+ #include <ctype.h>
++#include <dispatch/dispatch.h>
+ 
+ #define PLIST_IX    0
+ #define ARRAY_IX    1
+diff -Nur CF-744.12/CFRuntime.c CF-744.12n/CFRuntime.c
+--- CF-744.12/CFRuntime.c	2012-12-17 17:36:24.598057929 +0800
++++ CF-744.12n/CFRuntime.c	2012-12-17 17:36:12.905046060 +0800
+@@ -208,7 +208,7 @@
+ bool (*__CFObjCIsCollectable)(void *) = NULL;
+ #endif
+ 
+-#if !__CONSTANT_CFSTRINGS__ || DEPLOYMENT_TARGET_EMBEDDED_MINI
++#if (!__CONSTANT_CFSTRINGS__ || DEPLOYMENT_TARGET_EMBEDDED_MINI) && ! DEPLOYMENT_TARGET_LINUX
+ // Compiler uses this symbol name; must match compiler built-in decl, so we use 'int'
+ #if __LP64__
+ int __CFConstantStringClassReference[24] = {0};
+diff -Nur CF-744.12/CFUtilities.c CF-744.12n/CFUtilities.c
+--- CF-744.12/CFUtilities.c	2012-12-17 17:36:24.598057929 +0800
++++ CF-744.12n/CFUtilities.c	2012-12-17 17:36:12.906046061 +0800
+@@ -75,6 +75,7 @@
+ #if DEPLOYMENT_TARGET_LINUX || DEPLOYMENT_TARGET_FREEBSD
+ #include <string.h>
+ #include <pthread.h>
++#include <sys/mman.h>
+ #endif
+ 
+ /* Comparator is passed the address of the values. */
+@@ -585,7 +586,7 @@
+     char *time = NULL;
+     char *thread = NULL;
+     char *uid = NULL;
+-#if DEPLOYMENT_TARGET_WINDOWS
++#if DEPLOYMENT_TARGET_WINDOWS || DEPLOYMENT_TARGET_LINUX
+     int bannerLen = 0;
+ #endif
+ #if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_WINDOWS || DEPLOYMENT_TARGET_LINUX
+@@ -1067,7 +1068,7 @@
+     if (0LL == statBuf.st_size) {
+         bytes = malloc(8); // don't return constant string -- it's freed!
+ 	length = 0;
+-#if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
++#if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI || DEPLOYMENT_TARGET_LINUX
+     } else if (map) {
+         if((void *)-1 == (bytes = mmap(0, (size_t)statBuf.st_size, PROT_READ, MAP_PRIVATE, fd, 0))) {
+ 	    int32_t savederrno = errno;
+diff -Nur CF-744.12/CoreFoundation.h CF-744.12n/CoreFoundation.h
+--- CF-744.12/CoreFoundation.h	2012-09-29 02:19:21.000000000 +0800
++++ CF-744.12n/CoreFoundation.h	2012-12-17 17:36:37.674066756 +0800
+@@ -84,7 +84,6 @@
+ #include <CoreFoundation/CFURL.h>
+ #include <CoreFoundation/CFURLAccess.h>
+ #include <CoreFoundation/CFUUID.h>
+-#include <CoreFoundation/CFUtilities.h>
+ 
+ #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)) || (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE) || TARGET_OS_WIN32
+ #include <CoreFoundation/CFBundle.h>
+diff -Nur CF-744.12/CoreFoundation_Prefix.h CF-744.12n/CoreFoundation_Prefix.h
+--- CF-744.12/CoreFoundation_Prefix.h	2012-12-17 17:36:24.598057929 +0800
++++ CF-744.12n/CoreFoundation_Prefix.h	2012-12-17 17:36:12.905046060 +0800
+@@ -142,7 +142,13 @@
+ int32_t OSAtomicAdd32( int32_t theAmount, volatile int32_t *theValue );
+ int32_t OSAtomicAdd32Barrier( int32_t theAmount, volatile int32_t *theValue );
+ bool OSAtomicCompareAndSwap32Barrier( int32_t oldValue, int32_t newValue, volatile int32_t *theValue );
++
++bool OSAtomicCompareAndSwap64( int64_t __oldValue, int64_t __newValue, volatile int64_t *__theValue  );
++bool OSAtomicCompareAndSwap64Barrier( int64_t __oldValue, int64_t __newValue, volatile int64_t *__theValue  );
+     
++int64_t OSAtomicAdd64( int64_t __theAmount, volatile int64_t *__theValue  );
++int64_t OSAtomicAdd64Barrier( int64_t __theAmount, volatile int64_t *__theValue  );
++
+ void OSMemoryBarrier();
+ 
+ #include <malloc.h>
+diff -Nur CF-744.12/MakefileLinux CF-744.12n/MakefileLinux
+--- CF-744.12/MakefileLinux	2012-12-17 17:36:24.598057929 +0800
++++ CF-744.12n/MakefileLinux	2012-12-17 17:36:12.905046060 +0800
+@@ -4,7 +4,7 @@
+ MIN_MACOSX_VERSION=10.7
+ MAX_MACOSX_VERSION=MAC_OS_X_VERSION_10_7
+ 
+-OBJECTS = CFCharacterSet.o CFPreferences.o CFApplicationPreferences.o CFXMLPreferencesDomain.o CFStringEncodingConverter.o CFUniChar.o CFArray.o CFOldStylePList.o CFPropertyList.o CFStringEncodingDatabase.o CFUnicodeDecomposition.o CFBag.o CFData.o  CFStringEncodings.o CFUnicodePrecomposition.o CFBase.o CFDate.o CFNumber.o CFRuntime.o CFStringScanner.o CFBinaryHeap.o CFDateFormatter.o CFNumberFormatter.o CFSet.o CFStringUtilities.o CFUtilities.o CFBinaryPList.o CFDictionary.o CFPlatform.o CFSystemDirectories.o CFVersion.o CFBitVector.o CFError.o CFPlatformConverters.o CFTimeZone.o  CFBuiltinConverters.o CFFileUtilities.o  CFSortFunctions.o CFTree.o CFICUConverters.o CFURL.o CFLocale.o  CFURLAccess.o CFCalendar.o CFLocaleIdentifier.o CFString.o CFUUID.o CFStorage.o CFLocaleKeys.o
++OBJECTS = CFCharacterSet.o CFPreferences.o CFApplicationPreferences.o CFXMLPreferencesDomain.o CFStringEncodingConverter.o CFUniChar.o CFArray.o CFOldStylePList.o CFPropertyList.o CFStringEncodingDatabase.o CFUnicodeDecomposition.o CFBag.o CFData.o  CFStringEncodings.o CFUnicodePrecomposition.o CFBase.o CFDate.o CFNumber.o CFRuntime.o CFStringScanner.o CFBinaryHeap.o CFDateFormatter.o CFNumberFormatter.o CFSet.o CFStringUtilities.o CFUtilities.o CFBinaryPList.o CFDictionary.o CFPlatform.o CFSystemDirectories.o CFVersion.o CFBitVector.o CFError.o CFPlatformConverters.o CFTimeZone.o  CFBuiltinConverters.o CFFileUtilities.o  CFSortFunctions.o CFTree.o CFICUConverters.o CFURL.o CFLocale.o  CFURLAccess.o CFCalendar.o CFLocaleIdentifier.o CFString.o CFUUID.o CFStorage.o CFLocaleKeys.o CFBurstTrie.o CFBigNumber.o
+ OBJECTS += CFBasicHash.o
+ HFILES = $(wildcard *.h)
+ INTERMEDIATE_HFILES = $(addprefix $(OBJBASE)/CoreFoundation/,$(HFILES))
+@@ -30,7 +30,7 @@
+ LFLAGS=-shared -fpic -init=___CFInitialize -Wl,--no-undefined,-soname,libCoreFoundation.so
+ 
+ # Libs for open source version of ICU
+-LIBS=-lc -lpthread -lm -lrt  -licuuc -licudata -licui18n -lBlocksRuntime
++LIBS=-lc -lpthread -lm -lrt  -licuuc -licudata -licui18n -lBlocksRuntime -ldispatch
+ 
+ .PHONY: all install clean
+ .PRECIOUS: $(OBJBASE)/CoreFoundation/%.h

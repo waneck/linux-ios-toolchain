@@ -1,0 +1,545 @@
+diff -Nur gdb-1822/src/bfd/Makefile.in gdb-1822n/src/bfd/Makefile.in
+--- gdb-1822/src/bfd/Makefile.in	2007-01-25 06:05:42.000000000 +0800
++++ gdb-1822n/src/bfd/Makefile.in	2012-12-15 18:40:47.741418734 +0800
+@@ -260,7 +260,7 @@
+ INCDIR = $(srcdir)/../include
+ CSEARCH = -I. -I$(srcdir) -I$(INCDIR)
+ MKDEP = gcc -MM
+-SUBDIRS = doc po
++SUBDIRS =
+ bfdlib_LTLIBRARIES = libbfd.la
+ AM_CFLAGS = $(WARN_CFLAGS)
+ 
+diff -Nur gdb-1822/src/binutils/Makefile.in gdb-1822n/src/binutils/Makefile.in
+--- gdb-1822/src/binutils/Makefile.in	2006-02-01 09:20:23.000000000 +0800
++++ gdb-1822n/src/binutils/Makefile.in	2012-12-15 18:40:47.742418730 +0800
+@@ -316,7 +316,7 @@
+ target_os = @target_os@
+ target_vendor = @target_vendor@
+ AUTOMAKE_OPTIONS = cygnus dejagnu
+-SUBDIRS = po
++SUBDIRS = 
+ tooldir = $(exec_prefix)/$(target_alias)
+ YFLAGS = -d
+ AM_CFLAGS = $(WARN_CFLAGS)
+@@ -815,10 +815,10 @@
+ 	for dir in "$(DESTDIR)$(bindir)"; do \
+ 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
+ 	done
+-install: install-recursive
+-install-exec: install-exec-recursive
+-install-data: install-data-recursive
+-uninstall: uninstall-recursive
++install: 
++install-exec: 
++install-data: 
++uninstall:
+ 
+ install-am: all-am
+ 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+@@ -875,9 +875,9 @@
+ 
+ install-data-am:
+ 
+-install-exec-am: install-binPROGRAMS install-exec-local
++install-exec-am: 
+ 
+-install-info: install-info-recursive
++install-info: 
+ 
+ install-man:
+ 
+diff -Nur gdb-1822/src/gdb/c-exp.y gdb-1822n/src/gdb/c-exp.y
+--- gdb-1822/src/gdb/c-exp.y	2009-01-10 10:26:47.000000000 +0800
++++ gdb-1822n/src/gdb/c-exp.y	2012-12-15 18:40:47.744418734 +0800
+@@ -1567,7 +1567,7 @@
+       if (input_radix != 16 && !isdigit (lexptr[1]))
+         goto symbol;            /* Nope, must be a symbol.  */
+       /* Might be a floating point num in P format, e.g. 0x1.e84810f5c28fp+19 */
+-      if (input_radix == 16 && !ishexnumber (lexptr[1]))
++      if (input_radix == 16 && !isxdigit (lexptr[1]))
+         goto symbol;            /* Nope, must be a symbol. */
+       /* FALL THRU into number case.  */
+ 
+diff -Nur gdb-1822/src/gdb/defs.h gdb-1822n/src/gdb/defs.h
+--- gdb-1822/src/gdb/defs.h	2011-08-26 07:49:52.000000000 +0800
++++ gdb-1822n/src/gdb/defs.h	2012-12-15 18:40:47.744418734 +0800
+@@ -73,6 +73,8 @@
+ 
+ #include "bfd.h"
+ 
++#define REG_BASIC       0000
++
+ /* A byte from the program being debugged.  */
+ typedef bfd_byte gdb_byte;
+ 
+@@ -862,7 +864,7 @@
+ 
+ int re_exec (const char *str);
+ 
+-int re_set_syntax (int newflags);
++/*int re_set_syntax (int newflags);*/
+ 
+ int re_search_oneshot (regex_t *patbuf, const char *str, int size, int start, int range, void *regs);
+ 
+diff -Nur gdb-1822/src/gdb/dwarf2read.c gdb-1822n/src/gdb/dwarf2read.c
+--- gdb-1822/src/gdb/dwarf2read.c	2012-05-22 02:30:53.000000000 +0800
++++ gdb-1822n/src/gdb/dwarf2read.c	2012-12-15 18:40:47.748418741 +0800
+@@ -84,6 +84,27 @@
+    can be used for any other data associated to the objfile (symbol
+    names, type names, location expressions to name a few).  */
+ 
++void *_qsort_thunk = NULL;
++int (*_qsort_saved_func)(void *, const void *, const void *) = NULL;
++
++static int _qsort_comparator(const void *a, const void *b);
++
++static int _qsort_comparator(const void *a, const void *b)
++{
++  return _qsort_saved_func(_qsort_thunk, a, b);
++}
++
++void
++qsort_r_local(void *base, size_t nmemb, size_t size, void *thunk,
++    int (*compar)(void *, const void *, const void *))
++{
++  _qsort_thunk = thunk;
++  _qsort_saved_func = compar;
++
++  qsort(base, nmemb, size, _qsort_comparator);
++}
++
++
+ #ifndef DWARF2_REG_TO_REGNUM
+ #define DWARF2_REG_TO_REGNUM(REG) (REG)
+ #endif
+@@ -3617,7 +3638,7 @@
+         map->final_addr_index[i] = i; 
+   
+       /* Sort the final_addr_index array.  */
+-      qsort_r (map->final_addr_index, map->entries, sizeof (int), 
++      qsort_r_local (map->final_addr_index, map->entries, sizeof (int), 
+ 	       map->tuples, compare_map_entries_final_addr_index);
+     }
+   else if (map->entries == 1)
+@@ -3932,7 +3953,7 @@
+         map->final_addr_index[i] = i; 
+   
+       /* Sort the final_addr_index array.  */
+-      qsort_r (map->final_addr_index, map->entries, sizeof (int), 
++      qsort_r_local (map->final_addr_index, map->entries, sizeof (int), 
+ 	       map->tuples, compare_map_entries_final_addr_index);
+     }
+   else if (map->entries == 1)
+diff -Nur gdb-1822/src/gdb/macosx/arm-macosx-nat-exec.c gdb-1822n/src/gdb/macosx/arm-macosx-nat-exec.c
+--- gdb-1822/src/gdb/macosx/arm-macosx-nat-exec.c	2010-05-01 08:29:54.000000000 +0800
++++ gdb-1822n/src/gdb/macosx/arm-macosx-nat-exec.c	2012-12-15 18:40:47.748418741 +0800
+@@ -203,6 +203,7 @@
+ 			  &fp_regs->d[i]);
+ }
+ 
++#if 0
+ static void
+ validate_inferior_registers (int regno)
+ {
+@@ -231,7 +232,7 @@
+ fetch_inferior_registers (int regno)
+ {
+   int i;
+-  thread_t current_thread = ptid_get_tid (inferior_ptid);
++  nferior_registersthread_t current_thread = ptid_get_tid (inferior_ptid);
+   kern_return_t ret = KERN_SUCCESS;
+ 
+   if (TARGET_OSABI == GDB_OSABI_UNKNOWN)
+@@ -388,6 +389,7 @@
+     }
+ }
+ 
++#endif
+ void
+ macosx_complete_child_target (struct target_ops *target)
+ {
+diff -Nur gdb-1822/src/gdb/macosx/arm-macosx-tdep.c gdb-1822n/src/gdb/macosx/arm-macosx-tdep.c
+--- gdb-1822/src/gdb/macosx/arm-macosx-tdep.c	2012-01-10 07:54:35.000000000 +0800
++++ gdb-1822n/src/gdb/macosx/arm-macosx-tdep.c	2012-12-15 18:40:47.748418741 +0800
+@@ -60,6 +60,32 @@
+ #include <sys/sysctl.h>
+ #include "mach-o.h" /* for BFD mach definitions.  */
+ 
++
++mach_port_t mach_host_self(void)
++{
++  return 0;
++}
++
++kern_return_t host_info
++(
++ host_t host,
++ host_flavor_t flavor,
++ host_info_t host_info_out,
++ mach_msg_type_number_t *host_info_outCnt
++ )
++{
++  if(flavor == HOST_BASIC_INFO) {
++    host_basic_info_t      basic_info;
++
++    basic_info = (host_basic_info_t) host_info_out;
++    memset(basic_info, 0x00, sizeof(*basic_info));
++    basic_info->cpu_type = 12;//EMULATED_HOST_CPU_TYPE;
++    basic_info->cpu_subtype = 0;//EMULATED_HOST_CPU_SUBTYPE;
++  }
++
++  return 0;
++}
++
+ /* A boolean indicating if we must use software single stepping. Some 
+    targets may not support using IMVA mismatching for a variety of reasons,
+    and some remote targets may not implement the "s" packet.  */
+diff -Nur gdb-1822/src/gdb/macosx/macosx-nat-utils.c gdb-1822n/src/gdb/macosx/macosx-nat-utils.c
+--- gdb-1822/src/gdb/macosx/macosx-nat-utils.c	2011-07-09 06:07:14.000000000 +0800
++++ gdb-1822n/src/gdb/macosx/macosx-nat-utils.c	2012-12-15 18:40:47.748418741 +0800
+@@ -56,6 +56,11 @@
+ #include "macosx-nat-utils.h"
+ #include "macosx-nat-dyld.h"
+ 
++char *mach_error_string(mach_error_t error_value)
++{
++  return "Unknown mach error";
++}
++
+ static const char *make_info_plist_path (const char *bundle, 
+ 					 const char *bundle_suffix,
+ 					 const char *plist_bundle_path);
+@@ -829,12 +834,12 @@
+ 	int_flags |= RTLD_LOCAL;
+       if (strstr (flags, "RTLD_GLOBAL") != NULL)
+ 	int_flags |= RTLD_GLOBAL;
+-      if (strstr (flags, "RTLD_NOLOAD") != NULL)
++    /*  if (strstr (flags, "RTLD_NOLOAD") != NULL)
+ 	int_flags |= RTLD_NOLOAD;
+       if (strstr (flags, "RTLD_NODELETE") != NULL)
+ 	int_flags |= RTLD_NODELETE;
+       if (strstr (flags, "RTLD_FIRST") != NULL)
+-	int_flags |= RTLD_FIRST;
++	int_flags |= RTLD_FIRST;*/
+     }
+ 
+   /* If the user didn't pass in anything, set some sensible defaults.  */
+diff -Nur gdb-1822/src/gdb/macosx/macosx-tdep.c gdb-1822n/src/gdb/macosx/macosx-tdep.c
+--- gdb-1822/src/gdb/macosx/macosx-tdep.c	2012-07-18 06:14:03.000000000 +0800
++++ gdb-1822n/src/gdb/macosx/macosx-tdep.c	2012-12-15 18:40:47.749418742 +0800
+@@ -99,6 +99,10 @@
+ #endif
+ #include "gdbarch.h"
+ 
++extern size_t strlcat(char *dst, const char *src, size_t siz);
++extern size_t strlcpy(char *dst, const char *src, size_t siz);
++
++
+ int disable_aslr_flag = 1;
+ 
+ CORE_ADDR kernel_slide = INVALID_ADDRESS;
+@@ -940,7 +944,7 @@
+       
+       /* Full path length to each file in the dSYM's
+ 	 /Contents/Resources/DWARF/ directory.  */
+-      int full_path_len = path_len + dp->d_namlen + 1;
++      int full_path_len = path_len + strlen(dp->d_name) + 1;
+       if (sizeof (path) > full_path_len)
+ 	{
+ 	  CFURLRef path_url = NULL;
+@@ -1558,7 +1562,7 @@
+   if (plist_data == NULL)
+     return NULL;
+ 
+-  CFPropertyListRef plist = CFPropertyListCreateWithData (kCFAllocatorDefault, plist_data, kCFPropertyListImmutable, NULL, NULL);
++  CFPropertyListRef plist = CFPropertyListCreateFromXMLData (kCFAllocatorDefault, plist_data, kCFPropertyListImmutable, NULL);
+ 
+   if (plist == NULL || CFGetTypeID (plist) != CFDictionaryGetTypeID())
+     {
+@@ -1606,7 +1610,7 @@
+   return return_path;
+ }
+ 
+-const CFStringRef kSymbolRichExecutable = CFSTR("DBGSymbolRichExecutable");
++const CFStringRef kSymbolRichExecutable = "DBGSymbolRichExecutable";
+ 
+ /* Given a UUID plist from a dSYM and a UUID, returns the full path to the
+    symbol-rich executable described in that plist, or NULL on error. Caller is
+diff -Nur gdb-1822/src/gdb/macosx/macosx-tdep.h gdb-1822n/src/gdb/macosx/macosx-tdep.h
+--- gdb-1822/src/gdb/macosx/macosx-tdep.h	2012-06-29 11:27:31.000000000 +0800
++++ gdb-1822n/src/gdb/macosx/macosx-tdep.h	2012-12-15 18:40:47.749418742 +0800
+@@ -15,6 +15,10 @@
+ 
+ #include <CoreFoundation/CoreFoundation.h>
+ 
++typedef    unsigned char   __darwin_uuid_t[16];
++typedef __darwin_uuid_t                uuid_t;
++
++
+ struct internal_nlist;
+ struct external_nlist;
+ struct objfile;
+diff -Nur gdb-1822/src/gdb/main.c gdb-1822n/src/gdb/main.c
+--- gdb-1822/src/gdb/main.c	2010-06-29 10:36:58.000000000 +0800
++++ gdb-1822n/src/gdb/main.c	2012-12-15 18:40:47.749418742 +0800
+@@ -730,7 +730,7 @@
+      want the SAME function for all the gdbarch'es that are registered, so
+      it actually lives a little above the gdbarch....  
+      Not sure how to do that.  So instead, I just hack...  */
+-#if defined (USE_POSIX_SPAWN) || defined (USE_ARCH_FOR_EXEC)
++//#if defined (USE_POSIX_SPAWN) || defined (USE_ARCH_FOR_EXEC)
+   if (initial_arch != NULL)
+     {
+       char *arch_string = NULL;
+@@ -814,9 +814,9 @@
+     }
+ #endif	
+ 
+-#else
+-  warning ("--arch option not supported in this gdb.");
+-#endif
++//#else
++//  warning ("--arch option not supported in this gdb.");
++//#endif
+ 
+   /* APPLE LOCAL BEGIN: Set the osabi via option.  */
+   if (osabiarg != NULL)
+diff -Nur gdb-1822/src/gdb/Makefile.in gdb-1822n/src/gdb/Makefile.in
+--- gdb-1822/src/gdb/Makefile.in	2011-04-28 15:39:47.000000000 +0800
++++ gdb-1822n/src/gdb/Makefile.in	2012-12-15 18:40:47.750418743 +0800
+@@ -154,7 +154,7 @@
+ 
+ # APPLE LOCAL: We need to weak link to Carbon for the "open" command, and we
+ # need CoreFoundation for the plist parsing code.
+-CARBON_LDFLAGS = -framework CoreFoundation @CARBON_LIBS@
++CARBON_LDFLAGS = -lCoreFoundation -ldl -luuid
+ 
+ # APPLE LOCAL: Use DebugSymbols framework if available for dSYM finding
+ DEBUG_SYMBOLS_LDFLAGS = @DEBUG_SYMBOLS_LIBS@
+@@ -167,7 +167,7 @@
+ 
+ # APPLE LOCAL: Encode the Info.plist in the binary for the security framework's
+ # benefit.
+-ADD_INFO_PLIST = -sectcreate __TEXT __info_plist $(srcdir)/Info.plist
++ADD_INFO_PLIST = 
+ 
+ # Did the user give us a --with-sysroot option?
+ TARGET_SYSTEM_ROOT = @TARGET_SYSTEM_ROOT@
+@@ -356,7 +356,7 @@
+ # your system doesn't have fcntl.h in /usr/include (which is where it
+ # should be according to Posix).
+ DEFS = @DEFS@
+-GDB_CFLAGS = -I. -I$(srcdir) -I$(srcdir)/config -DLOCALEDIR="\"$(localedir)\"" $(DEFS)
++GDB_CFLAGS = -I. -I$(srcdir) -I$(srcdir)/config -DLOCALEDIR="\"$(localedir)\"" $(DEFS) -D__LITTLE_ENDIAN__=1
+ 
+ # M{H,T}_CFLAGS, if defined, have host- and target-dependent CFLAGS
+ # from the config directory.
+@@ -1000,7 +1000,7 @@
+ 
+ TSOBS = inflow.o
+ 
+-SUBDIRS = @subdirs@
++SUBDIRS = 
+ 
+ # For now, shortcut the "configure GDB for fewer languages" stuff.
+ YYFILES = c-exp.c \
+@@ -3283,7 +3283,7 @@
+ 
+ NSLIBTOOL = cc -dynamiclib
+ 
+-SYSTEM_FRAMEWORK = -framework System
++SYSTEM_FRAMEWORK = 
+ 
+ FRAMEWORK = gdb
+ FRAMEWORK_PREFIX = 
+diff -Nur gdb-1822/src/gdb/mi/mi-cmd-stack.c gdb-1822n/src/gdb/mi/mi-cmd-stack.c
+--- gdb-1822/src/gdb/mi/mi-cmd-stack.c	2011-07-14 06:17:21.000000000 +0800
++++ gdb-1822n/src/gdb/mi/mi-cmd-stack.c	2012-12-15 18:40:47.750418743 +0800
+@@ -286,7 +286,7 @@
+ 	    if (argc == 1)
+ 	      error ("mi_cmd_stack_list_frames_lite: No argument to -limit.");
+ 
+-	    if (! isnumber (argv[1][0]))
++	    if (! isdigit (argv[1][0]))
+ 	      error ("mi_cmd_stack_list_frames_lite: Invalid argument to -limit.");
+ 	    limit = atoi (argv[1]);
+ 	    argc -= 2;
+@@ -297,7 +297,7 @@
+             if (argc == 1)
+               error ("mi_cmd_stack_list_frames_lite: No argument to -start.");
+ 
+-            if (! isnumber (argv[1][0]))
++            if (! isdigit (argv[1][0]))
+               error ("mi_cmd_stack_list_frames_lite: Invalid argument to -start.");
+             start = atoi (argv[1]);
+             argc -= 2;
+@@ -308,7 +308,7 @@
+             if (argc == 1)
+               error ("mi_cmd_stack_list_frames_lite: No argument to -count_limit.");
+ 
+-            if (! isnumber (argv[1][0]))
++            if (! isdigit (argv[1][0]))
+               error ("mi_cmd_stack_list_frames_lite: Invalid argument to -count_limit.");
+             count_limit = atoi (argv[1]);
+             argc -= 2;
+@@ -319,7 +319,7 @@
+ 	    if (argc == 1)
+ 	      error ("mi_cmd_stack_list_frames_lite: No argument to -names.");
+ 
+-	    if (! isnumber (argv[1][0]))
++	    if (! isdigit (argv[1][0]))
+ 	      error ("mi_cmd_stack_list_frames_lite: Invalid argument to -names.");
+ 	    names = atoi (argv[1]);
+ 	    argc -= 2;
+diff -Nur gdb-1822/src/gdb/objc-exp.y gdb-1822n/src/gdb/objc-exp.y
+--- gdb-1822/src/gdb/objc-exp.y	2009-03-19 09:48:32.000000000 +0800
++++ gdb-1822n/src/gdb/objc-exp.y	2012-12-15 18:40:47.750418743 +0800
+@@ -1429,7 +1429,7 @@
+       if (input_radix != 16 && !isdigit (lexptr[1]))
+ 	goto symbol;		/* Nope, must be a symbol.  */
+       /* Might be a floating point num in P format, e.g. 0x1.e84810f5c28fp+19 */
+-      if (input_radix == 16 && !ishexnumber (lexptr[1]))
++      if (input_radix == 16 && !isxdigit (lexptr[1]))
+ 	goto symbol;		/* Nope, must be a symbol. */
+       /* FALL THRU into number case.  */
+ 
+diff -Nur gdb-1822/src/gdb/symtab.c gdb-1822n/src/gdb/symtab.c
+--- gdb-1822/src/gdb/symtab.c	2011-05-17 09:41:39.000000000 +0800
++++ gdb-1822n/src/gdb/symtab.c	2012-12-15 18:40:47.751418744 +0800
+@@ -62,6 +62,59 @@
+ /* APPLE LOCAL: So we can complain.  */
+ #include "complaints.h"
+ 
++
++size_t strlcat(char *dst, const char *src, size_t siz)
++{
++   char *d = dst;
++   const char *s = src;
++   size_t n = siz;
++   size_t dlen;
++
++   /* Find the end of dst and adjust bytes left but don't go past end */
++   while (n-- != 0 && *d != '\0')
++       d++;
++   dlen = d - dst;
++   n = siz - dlen;
++
++   if (n == 0)
++       return(dlen + strlen(s));
++   while (*s != '\0') {
++       if (n != 1) {
++           *d++ = *s;
++           n--;
++       }
++       s++;
++   }
++   *d = '\0';
++
++   return(dlen + (s - src));   /* count does not include NUL */
++}
++
++strlcpy(char *dst, const char *src, size_t siz)
++{
++        char *d = dst;
++        const char *s = src;
++        size_t n = siz;
++
++        /* Copy as many bytes as will fit */
++        if (n != 0) {
++                while (--n != 0) {
++                        if ((*d++ = *s++) == '\0')
++                                break;
++                }
++        }
++
++        /* Not enough room in dst, add NUL and traverse rest of src */
++        if (n == 0) {
++                if (siz != 0)
++                        *d = '\0';                /* NUL-terminate dst */
++                while (*s++)
++                        ;
++        }
++
++        return(s - src - 1);        /* count does not include NUL */
++}
++
+ /* APPLE LOCAL begin cache lookup values for improved performance  */
+ 
+ asection * cached_mapped_section = NULL;
+diff -Nur gdb-1822/src/gdb/thread.c gdb-1822n/src/gdb/thread.c
+--- gdb-1822/src/gdb/thread.c	2010-04-02 10:34:02.000000000 +0800
++++ gdb-1822n/src/gdb/thread.c	2012-12-15 18:40:47.751418744 +0800
+@@ -49,6 +49,8 @@
+ #include "macosx-nat-infthread.h"
+ #endif
+ 
++extern size_t strlcat(char *dst, const char *src, size_t siz);
++extern size_t strlcpy(char *dst, const char *src, size_t siz);
+ /*#include "lynxos-core.h" */
+ 
+ /* Definition of struct thread_info exported to gdbthread.h */
+diff -Nur gdb-1822/src/gdb/utils.c gdb-1822n/src/gdb/utils.c
+--- gdb-1822/src/gdb/utils.c	2012-02-02 12:34:52.000000000 +0800
++++ gdb-1822n/src/gdb/utils.c	2012-12-15 18:40:47.752418745 +0800
+@@ -3974,14 +3974,14 @@
+ // REG_EXTENDED, REG_BASIC, REG_NOSPEC, REG_ICASE, REG_NOSUB, REG_NEWLINE, 
+ // REG_PEND used for subsequent re_comp's
+ 
+-int
++/*int
+ re_set_syntax (int newflags)
+ {
+   int oldflags = regex_fmt;
+   regex_fmt = newflags;
+   return oldflags;
+ }
+-
++*/
+ const char *
+ re_comp (const char *str)
+ {
+diff -Nur gdb-1822/src/include/libiberty.h gdb-1822n/src/include/libiberty.h
+--- gdb-1822/src/include/libiberty.h	2009-01-14 06:04:36.000000000 +0800
++++ gdb-1822n/src/include/libiberty.h	2012-12-15 18:40:47.752418745 +0800
+@@ -93,6 +93,7 @@
+    declaration without arguments.  If it is 0, we checked and failed
+    to find the declaration so provide a fully prototyped one.  If it
+    is 1, we found it so don't provide any declaration at all.  */
++#if 0
+ #if !HAVE_DECL_BASENAME
+   /* APPLE LOCAL basename */
+ #if defined (__GNU_LIBRARY__ ) || defined (__linux__) || defined (__FreeBSD__) || defined (__OpenBSD__) || defined(__NetBSD__) || defined (__APPLE__) || defined (__CYGWIN__) || defined (__CYGWIN32__) || defined (__MINGW32__) || defined (HAVE_DECL_BASENAME)
+@@ -104,7 +105,7 @@
+ #define basename basename_cannot_be_used_without_a_prototype
+ #endif
+ #endif
+-
++#endif
+ /* A well-defined basename () that is always compiled in.  */
+ 
+ extern const char *lbasename (const char *);
+diff -Nur gdb-1822/src/libiberty/Makefile.in gdb-1822n/src/libiberty/Makefile.in
+--- gdb-1822/src/libiberty/Makefile.in	2011-04-28 15:39:48.000000000 +0800
++++ gdb-1822n/src/libiberty/Makefile.in	2012-12-15 18:40:47.752418745 +0800
+@@ -322,7 +322,7 @@
+ @MAINT@	echo stamp > stamp-functions
+ 
+ INSTALL_DEST = @INSTALL_DEST@
+-install: install_to_$(INSTALL_DEST) install-subdir
++install: 
+ 
+ install_to_libdir: all
+ 	${mkinstalldirs} $(DESTDIR)$(libdir)$(MULTISUBDIR)
+diff -Nur gdb-1822/src/opcodes/Makefile.in gdb-1822n/src/opcodes/Makefile.in
+--- gdb-1822/src/opcodes/Makefile.in	2011-04-28 15:39:48.000000000 +0800
++++ gdb-1822n/src/opcodes/Makefile.in	2012-12-15 18:40:47.752418745 +0800
+@@ -248,7 +248,7 @@
+ target_vendor = @target_vendor@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-SUBDIRS = po
++SUBDIRS =
+ INCDIR = $(srcdir)/../include
+ BFDDIR = $(srcdir)/../bfd
+ MKDEP = gcc -MM

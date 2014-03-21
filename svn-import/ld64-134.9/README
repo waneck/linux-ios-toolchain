@@ -1,0 +1,6 @@
+Standalone ld64-134.9 patches, need copy the "include" folder from cctools-836-for-linux.
+The patch also works with ld64-133.3
+
+http://www.opensource.apple.com/tarballs/ld64/ld64-133.3.tar.gz
+http://www.opensource.apple.com/tarballs/ld64/ld64-134.9.tar.gz
+

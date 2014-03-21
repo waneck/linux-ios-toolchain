@@ -1,0 +1,41 @@
+ppc_as-flonum-copy.o: ../flonum-copy.c /usr/include/string.h \
+  /usr/include/features.h /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/predefs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/clang/3.2/include/stddef.h /usr/include/xlocale.h \
+  ../../as/flonum.h /usr/include/clang/3.2/include/stdint.h \
+  /usr/include/stdint.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  ../../as/bignum.h
+
+/usr/include/string.h:
+
+/usr/include/features.h:
+
+/usr/include/stdc-predef.h:
+
+/usr/include/x86_64-linux-gnu/bits/predefs.h:
+
+/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/clang/3.2/include/stddef.h:
+
+/usr/include/xlocale.h:
+
+../../as/flonum.h:
+
+/usr/include/clang/3.2/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+../../as/bignum.h:

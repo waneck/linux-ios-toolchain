@@ -1,0 +1,25 @@
+"UICatalogTitle" = "UICatalog";
+"ButtonsTitle" = "Buttons";
+"ControlsTitle" = "Controls";
+"TextFieldTitle" = "TextFields";
+"SearchBarTitle" = "SearchBar";
+"TextViewTitle" = "TextView";
+"SegmentTitle" = "Segment";
+"ToolbarTitle" = "Toolbar";
+"PickerTitle" = "Pickers";
+"ImagesTitle" = "Images";
+"WebTitle" = "Web";
+"AlertTitle" = "Alerts";
+"TransitionsTitle" = "Transitions";
+"AboutTitle" = "About";
+
+"StartTitle" = "Start";
+"StopTitle" = "Stop";
+
+"StyleTitle" = "Style";
+"ChooseStyleTitle" = "Choose a UIBarStyle for the bottom toolbar:";
+
+"FlipTitle" = "Flip Image";
+"CurlTitle" = "Curl Image";
+
+"LeftView" = "Left View:";

@@ -1,0 +1,209 @@
+libstuff_la-bytesex.lo: bytesex.c /usr/include/string.h \
+  /usr/include/features.h /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/predefs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/clang/3.2/include/stddef.h /usr/include/xlocale.h \
+  ../include/mach-o/fat.h /usr/include/clang/3.2/include/stdint.h \
+  /usr/include/stdint.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  ../include/mach/machine.h ../include/foreign/mach/machine/vm_types.h \
+  ../include/foreign/mach/i386/vm_types.h \
+  ../include/foreign/i386/_types.h \
+  ../include/foreign/mach/i386/vm_param.h \
+  ../include/foreign/mach/boolean.h \
+  ../include/foreign/mach/machine/boolean.h \
+  ../include/foreign/mach/i386/boolean.h \
+  ../include/foreign/architecture/byte_order.h \
+  ../include/foreign/libkern/OSByteOrder.h \
+  ../include/foreign/libkern/_OSByteOrder.h \
+  ../include/foreign/sys/_types.h ../include/foreign/machine/_types.h \
+  ../include/foreign/libkern/i386/_OSByteOrder.h \
+  ../include/foreign/libkern/i386/OSByteOrder.h \
+  ../include/mach-o/loader.h ../include/foreign/mach/vm_prot.h \
+  ../include/foreign/mach/machine/thread_status.h \
+  ../include/foreign/mach/i386/thread_status.h \
+  ../include/foreign/mach/i386/_structs.h \
+  ../include/foreign/mach/message.h ../include/foreign/mach/port.h \
+  ../include/foreign/mach/kern_return.h \
+  ../include/foreign/mach/machine/kern_return.h \
+  ../include/foreign/mach/i386/kern_return.h \
+  ../include/foreign/mach/i386/fp_reg.h \
+  ../include/foreign/mach/i386/thread_state.h \
+  ../include/foreign/i386/eflags.h ../include/mach/m68k/thread_status.h \
+  ../include/mach/ppc/thread_status.h ../include/mach/ppc/_structs.h \
+  ../include/mach/m88k/thread_status.h \
+  ../include/architecture/m88k/fp_regs.h \
+  ../include/architecture/m88k/reg_help.h \
+  ../include/architecture/nrw/reg_help.h \
+  ../include/mach/i860/thread_status.h \
+  ../include/mach/hppa/thread_status.h \
+  ../include/mach/sparc/thread_status.h \
+  ../include/architecture/sparc/reg.h \
+  ../include/mach/arm/thread_status.h ../include/mach/arm/_structs.h \
+  ../include/mach/arm/thread_state.h ../include/mach-o/nlist.h \
+  ../include/mach-o/reloc.h ../include/mach-o/ranlib.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h /usr/include/time.h \
+  /usr/include/endian.h /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap-16.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/sigset.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  ../include/stuff/bool.h ../include/stuff/bytesex.h
+
+/usr/include/string.h:
+
+/usr/include/features.h:
+
+/usr/include/stdc-predef.h:
+
+/usr/include/x86_64-linux-gnu/bits/predefs.h:
+
+/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/clang/3.2/include/stddef.h:
+
+/usr/include/xlocale.h:
+
+../include/mach-o/fat.h:
+
+/usr/include/clang/3.2/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+../include/mach/machine.h:
+
+../include/foreign/mach/machine/vm_types.h:
+
+../include/foreign/mach/i386/vm_types.h:
+
+../include/foreign/i386/_types.h:
+
+../include/foreign/mach/i386/vm_param.h:
+
+../include/foreign/mach/boolean.h:
+
+../include/foreign/mach/machine/boolean.h:
+
+../include/foreign/mach/i386/boolean.h:
+
+../include/foreign/architecture/byte_order.h:
+
+../include/foreign/libkern/OSByteOrder.h:
+
+../include/foreign/libkern/_OSByteOrder.h:
+
+../include/foreign/sys/_types.h:
+
+../include/foreign/machine/_types.h:
+
+../include/foreign/libkern/i386/_OSByteOrder.h:
+
+../include/foreign/libkern/i386/OSByteOrder.h:
+
+../include/mach-o/loader.h:
+
+../include/foreign/mach/vm_prot.h:
+
+../include/foreign/mach/machine/thread_status.h:
+
+../include/foreign/mach/i386/thread_status.h:
+
+../include/foreign/mach/i386/_structs.h:
+
+../include/foreign/mach/message.h:
+
+../include/foreign/mach/port.h:
+
+../include/foreign/mach/kern_return.h:
+
+../include/foreign/mach/machine/kern_return.h:
+
+../include/foreign/mach/i386/kern_return.h:
+
+../include/foreign/mach/i386/fp_reg.h:
+
+../include/foreign/mach/i386/thread_state.h:
+
+../include/foreign/i386/eflags.h:
+
+../include/mach/m68k/thread_status.h:
+
+../include/mach/ppc/thread_status.h:
+
+../include/mach/ppc/_structs.h:
+
+../include/mach/m88k/thread_status.h:
+
+../include/architecture/m88k/fp_regs.h:
+
+../include/architecture/m88k/reg_help.h:
+
+../include/architecture/nrw/reg_help.h:
+
+../include/mach/i860/thread_status.h:
+
+../include/mach/hppa/thread_status.h:
+
+../include/mach/sparc/thread_status.h:
+
+../include/architecture/sparc/reg.h:
+
+../include/mach/arm/thread_status.h:
+
+../include/mach/arm/_structs.h:
+
+../include/mach/arm/thread_state.h:
+
+../include/mach-o/nlist.h:
+
+../include/mach-o/reloc.h:
+
+../include/mach-o/ranlib.h:
+
+/usr/include/x86_64-linux-gnu/sys/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/time.h:
+
+/usr/include/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap-16.h:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigset.h:
+
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/x86_64-linux-gnu/sys/sysmacros.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
+
+../include/stuff/bool.h:
+
+../include/stuff/bytesex.h:

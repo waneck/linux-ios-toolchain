@@ -1,0 +1,3 @@
+objc_msgSend.lo: objc_msgSend.S objc_msgSend.x86-64.S
+
+objc_msgSend.x86-64.S:

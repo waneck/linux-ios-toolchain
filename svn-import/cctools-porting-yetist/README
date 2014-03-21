@@ -1,0 +1,10 @@
+== build
+$ ./updatesources.sh 
+$ cd workspace/
+$ patch -p1 < patches/porting-single.patch 
+$ ./autogen.sh 
+$ ./configure --target=arm-apple-darwin11 --prefix=/usr --enable-maintainer-mode
+
+== check for release
+$ target_alias=arm-apple-darwin11 make distcheck
+

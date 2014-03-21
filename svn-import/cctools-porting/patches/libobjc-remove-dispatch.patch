@@ -1,0 +1,21 @@
+diff -Nur cctools-839/libobjc2/objc/toydispatch.h cctools-839n/libobjc2/objc/toydispatch.h
+--- cctools-839/libobjc2/objc/toydispatch.h	2012-12-08 15:37:43.812553986 +0800
++++ cctools-839n/libobjc2/objc/toydispatch.h	2012-12-08 15:38:32.404563800 +0800
+@@ -11,12 +11,6 @@
+  */
+ 
+ /* If the real libdispatch exists, use that instead of the toy one. */
+-#if !defined(__has_include)
+-#define __has_include(x) 0
+-#endif
+-#if __has_include(<dispatch/dispatch.h>) && !defined(__TOY_DISPATCH__)
+-#	include <dispatch/dispatch.h>
+-#else
+ 
+ /**
+  * Function type for functions that can be added to dispatch queues.
+@@ -44,4 +38,3 @@
+ 
+ #define dispatch_retain toy_dispatch_retain
+ void dispatch_retain(dispatch_queue_t queue);
+-#endif

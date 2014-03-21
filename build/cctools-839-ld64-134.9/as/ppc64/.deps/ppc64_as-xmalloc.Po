@@ -1,0 +1,154 @@
+ppc64_as-xmalloc.o: ../xmalloc.c /usr/include/stdlib.h \
+  /usr/include/features.h /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/predefs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/clang/3.2/include/stddef.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap-16.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/time.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/sigset.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/alloca.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h ../../as/xmalloc.h \
+  ../../as/messages.h ../../as/as.h \
+  /usr/include/clang/3.2/include/stdint.h /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h /usr/include/stdio.h \
+  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
+  /usr/include/clang/3.2/include/stdarg.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h /usr/include/assert.h \
+  ../../include/mach/machine.h \
+  ../../include/foreign/mach/machine/vm_types.h \
+  ../../include/foreign/mach/i386/vm_types.h \
+  ../../include/foreign/i386/_types.h \
+  ../../include/foreign/mach/i386/vm_param.h \
+  ../../include/foreign/mach/boolean.h \
+  ../../include/foreign/mach/machine/boolean.h \
+  ../../include/foreign/mach/i386/boolean.h ../../as/expr.h \
+  ../../as/struc-symbol.h ../../as/arch64_32.h \
+  ../../include/mach-o/nlist.h ../../as/bignum.h ../../as/flonum.h \
+  ../../as/write_object.h
+
+/usr/include/stdlib.h:
+
+/usr/include/features.h:
+
+/usr/include/stdc-predef.h:
+
+/usr/include/x86_64-linux-gnu/bits/predefs.h:
+
+/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/clang/3.2/include/stddef.h:
+
+/usr/include/x86_64-linux-gnu/bits/waitflags.h:
+
+/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
+
+/usr/include/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap.h:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap-16.h:
+
+/usr/include/x86_64-linux-gnu/sys/types.h:
+
+/usr/include/time.h:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigset.h:
+
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/x86_64-linux-gnu/sys/sysmacros.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+../../as/xmalloc.h:
+
+../../as/messages.h:
+
+../../as/as.h:
+
+/usr/include/clang/3.2/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+/usr/include/stdio.h:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/wchar.h:
+
+/usr/include/clang/3.2/include/stdarg.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
+
+/usr/include/assert.h:
+
+../../include/mach/machine.h:
+
+../../include/foreign/mach/machine/vm_types.h:
+
+../../include/foreign/mach/i386/vm_types.h:
+
+../../include/foreign/i386/_types.h:
+
+../../include/foreign/mach/i386/vm_param.h:
+
+../../include/foreign/mach/boolean.h:
+
+../../include/foreign/mach/machine/boolean.h:
+
+../../include/foreign/mach/i386/boolean.h:
+
+../../as/expr.h:
+
+../../as/struc-symbol.h:
+
+../../as/arch64_32.h:
+
+../../include/mach-o/nlist.h:
+
+../../as/bignum.h:
+
+../../as/flonum.h:
+
+../../as/write_object.h:

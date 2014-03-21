@@ -1,0 +1,11 @@
+diff -Nur maloader-master/ld-mac.cc maloader-master.new/ld-mac.cc
+--- maloader-master/ld-mac.cc	2012-12-13 22:48:30.000000000 +0800
++++ maloader-master.new/ld-mac.cc	2012-12-15 00:29:10.469162537 +0800
+@@ -42,6 +42,7 @@
+ #include <sys/mman.h>
+ #include <time.h>
+ #include <ucontext.h>
++#include <unistd.h>
+ 
+ #include <algorithm>
+ #include <iostream>

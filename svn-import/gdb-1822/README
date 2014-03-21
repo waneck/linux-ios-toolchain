@@ -1,0 +1,73 @@
+gdb-1822 ported.
+
+####################################################
+Pre-Requires:opencflite, dsymutil from MacOSX.
+
+1, Download opencflite-476.19.0 from http://opencflite.sourceforge.net, build and install it.
+You may need 'tzfile.h', please copy it to "opencflite-476.19.0/include".
+$./configure --with-tz-include=<absolute path to opencflite> --disable-debug --prefix=/usr
+$make;make install
+
+2, Download maloader from https://github.com/shinh/maloader.
+apply ld-mac-loader-path.patch/ld-mac-missing-header.patch
+run:
+
+$make
+$install -m0755 ld-mac /usr/bin
+$install -m0644 libmac.so /lib
+
+3,Copy dsymutil from MacOSX to /usr/bin/dsymutil-macosx
+create a script "/usr/bin/dsymutil"
+===============
+#!/bin/bash
+/usr/bin/ld-mac /usr/bin/dsymutil-macosx $@
+==================
+chmod +x /usr/bin/dsymutil.
+
+####################################################
+Howto build a gdb for ios debug:
+
+1, download gdb-1822 from http://www.opensource.apple.com/tarballs/gdb/gdb-1822.tar.gz
+
+2, copy everything in "externalheaders" to src/include.
+
+3, apply gdb-1822-ported.patch.
+   apply gdb-1822-force-sysroot-to-sdk.patch
+
+4, enter src folder, run
+./configure --target=arm-apple-darwin11 --prefix=/usr
+
+5, make;make install
+
+you will get a command "arm-apple-darwin11-gdb"
+
+####################################################
+How to debug.
+
+1, Find DeveloperDiskImage.img in xcode.img, extract it, sign the debug server and upload all files to /Developer of your device.
+You can refer to http://iphonedevwiki.net/index.php/Debugserver for more infos.
+
+Or download it from:
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/debugserver-for-ios.tar.gz
+extract and upload "Developer" folder to your ios Device "/" dir.
+
+2, create a helloworld c or cpp program.
+use "ios-clang -g -o hello hello.cpp" to compile it.
+if dsymutil works, you will also got "hello.dSYM" dir contains debug infomations.
+
+3, install result  to the same path of iOS device and SDK path.
+NOTE: there is a local copy in SDK path and a remote copy in iOS device.
+I put them in /tmp and <SDk path>/tmp
+
+4,ssh to your iOS device, run:
+/Developer/usr/bin/debugserver 1000 /tmp/hello
+
+it will launch debugserver, open port 1000 and  waiting for a connection.
+
+5,run "arm-apple-darwin11-gdb" in linux.
+when you get "(gdb)" prompt, input:
+(gdb)set shlib-path-substitutions / /<absolute path to sdk>/
+(gdb)file /<absolute path to sdk>/tmp/hello
+(gdb)target remote-macosx <Your device IP>:1000
+
+6, Continue your debug for iOS!!!!

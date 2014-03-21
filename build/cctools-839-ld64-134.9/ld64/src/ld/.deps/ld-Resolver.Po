@@ -1,0 +1,839 @@
+ld-Resolver.o: Resolver.cpp /usr/include/stdlib.h /usr/include/features.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/predefs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/clang/3.2/include/stddef.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap-16.h \
+  /usr/include/xlocale.h /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/time.h /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/sigset.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/alloca.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/sys/stat.h \
+  /usr/include/x86_64-linux-gnu/bits/stat.h \
+  /usr/include/x86_64-linux-gnu/sys/mman.h \
+  /usr/include/x86_64-linux-gnu/bits/mman.h \
+  /usr/include/x86_64-linux-gnu/sys/sysctl.h /usr/include/linux/sysctl.h \
+  /usr/include/linux/kernel.h /usr/include/linux/types.h \
+  /usr/include/x86_64-linux-gnu/bits/sysctl.h /usr/include/fcntl.h \
+  /usr/include/x86_64-linux-gnu/bits/fcntl.h \
+  /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
+  /usr/include/x86_64-linux-gnu/bits/uio.h /usr/include/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+  /usr/include/clang/3.2/include/limits.h /usr/include/limits.h \
+  /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+  /usr/include/linux/limits.h \
+  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h /usr/include/unistd.h \
+  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+  /usr/include/x86_64-linux-gnu/bits/environments.h \
+  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
+  ../../../include/foreign/mach/mach_time.h \
+  ../../../include/foreign/mach/mach_types.h \
+  /usr/include/clang/3.2/include/stdint.h /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  ../../../include/foreign/mach/host_info.h \
+  ../../../include/foreign/mach/message.h \
+  ../../../include/foreign/mach/port.h \
+  ../../../include/foreign/mach/boolean.h \
+  ../../../include/foreign/mach/machine/boolean.h \
+  ../../../include/foreign/mach/i386/boolean.h \
+  ../../../include/foreign/mach/machine/vm_types.h \
+  ../../../include/foreign/mach/i386/vm_types.h \
+  ../../../include/foreign/i386/_types.h \
+  ../../../include/foreign/mach/i386/vm_param.h \
+  ../../../include/foreign/mach/kern_return.h \
+  ../../../include/foreign/mach/machine/kern_return.h \
+  ../../../include/foreign/mach/i386/kern_return.h \
+  ../../../include/foreign/mach/vm_statistics.h \
+  ../../../include/mach/machine.h \
+  ../../../include/foreign/mach/time_value.h \
+  ../../../include/foreign/mach/host_notify.h \
+  ../../../include/foreign/mach/host_special_ports.h \
+  ../../../include/foreign/mach/memory_object_types.h \
+  ../../../include/foreign/mach/vm_prot.h \
+  ../../../include/foreign/mach/vm_sync.h \
+  ../../../include/foreign/mach/vm_types.h \
+  ../../../include/foreign/mach/exception_types.h \
+  ../../../include/foreign/mach/machine/exception.h \
+  ../../../include/foreign/mach/i386/exception.h \
+  ../../../include/foreign/mach/thread_status.h \
+  ../../../include/foreign/mach/machine/thread_status.h \
+  ../../../include/foreign/mach/i386/thread_status.h \
+  ../../../include/foreign/mach/i386/_structs.h \
+  ../../../include/foreign/mach/i386/fp_reg.h \
+  ../../../include/foreign/mach/i386/thread_state.h \
+  ../../../include/foreign/i386/eflags.h \
+  ../../../include/foreign/mach/machine/thread_state.h \
+  ../../../include/foreign/mach/processor_info.h \
+  ../../../include/foreign/mach/machine/processor_info.h \
+  ../../../include/foreign/mach/i386/processor_info.h \
+  ../../../include/foreign/mach/task_info.h \
+  ../../../include/foreign/mach/policy.h \
+  ../../../include/foreign/mach/task_policy.h \
+  ../../../include/foreign/mach/task_special_ports.h \
+  ../../../include/foreign/mach/thread_info.h \
+  ../../../include/foreign/mach/thread_policy.h \
+  ../../../include/foreign/mach/thread_special_ports.h \
+  ../../../include/foreign/mach/clock_types.h \
+  ../../../include/foreign/mach/vm_attributes.h \
+  ../../../include/foreign/mach/vm_inherit.h \
+  ../../../include/foreign/mach/vm_purgable.h \
+  ../../../include/foreign/mach/vm_behavior.h \
+  ../../../include/foreign/mach/vm_region.h \
+  ../../../include/foreign/mach/machine/vm_param.h \
+  ../../../include/foreign/mach/kmod.h \
+  ../../../include/foreign/mach/std_types.h \
+  ../../../include/foreign/mach/mach_init.h \
+  /usr/include/clang/3.2/include/stdarg.h \
+  ../../../include/foreign/mach/mach_traps.h \
+  ../../../include/foreign/machine/endian.h \
+  ../../../include/foreign/i386/endian.h \
+  ../../../include/foreign/mach/mach_host.h /usr/include/string.h \
+  ../../../include/foreign/mach/ndr.h \
+  ../../../include/foreign/libkern/OSByteOrder.h \
+  ../../../include/foreign/libkern/_OSByteOrder.h \
+  ../../../include/foreign/sys/_types.h \
+  ../../../include/foreign/machine/_types.h \
+  ../../../include/foreign/libkern/i386/_OSByteOrder.h \
+  ../../../include/foreign/libkern/i386/OSByteOrder.h \
+  ../../../include/foreign/mach/notify.h \
+  ../../../include/foreign/mach/mig_errors.h \
+  ../../../include/foreign/mach/mig.h \
+  ../../../include/foreign/mach_debug/mach_debug_types.h \
+  ../../../include/foreign/mach_debug/ipc_info.h \
+  ../../../include/foreign/mach_debug/vm_info.h \
+  ../../../include/foreign/mach_debug/zone_info.h \
+  ../../../include/foreign/mach_debug/page_info.h \
+  ../../../include/foreign/mach_debug/hash_info.h \
+  ../../../include/foreign/mach_debug/lockgroup_info.h \
+  /usr/include/dlfcn.h /usr/include/x86_64-linux-gnu/bits/dlfcn.h \
+  ../../../include/mach-o/dyld.h ../../../include/mach-o/loader.h \
+  ../../../include/foreign/architecture/byte_order.h \
+  ../../../include/foreign/AvailabilityMacros.h \
+  ../../../include/mach-o/fat.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/string \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/c++config.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/cpu_defines.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stringfwd.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/memoryfwd.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/char_traits.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_algobase.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/functexcept.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/exception_defines.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/cpp_type_traits.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/type_traits.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/numeric_traits.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_pair.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/move.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/concept_check.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_iterator_base_types.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_iterator_base_funcs.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/debug/debug.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_iterator.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/postypes.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/cwchar \
+  /usr/include/wchar.h /usr/include/stdio.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/allocator.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/c++allocator.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/new_allocator.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/new \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/exception \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/atomic_lockfree_defines.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/localefwd.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/c++locale.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/clocale \
+  /usr/include/locale.h /usr/include/x86_64-linux-gnu/bits/locale.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/iosfwd \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/cctype \
+  /usr/include/ctype.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/ostream_insert.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/cxxabi_forced.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_function.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/backward/binders.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/range_access.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/basic_string.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/atomicity.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/gthr.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/gthr-default.h \
+  /usr/include/pthread.h /usr/include/sched.h \
+  /usr/include/x86_64-linux-gnu/bits/sched.h \
+  /usr/include/x86_64-linux-gnu/bits/timex.h \
+  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/atomic_word.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/basic_string.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/map \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_tree.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_map.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_multimap.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/set \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_set.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_multiset.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/vector \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_construct.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/alloc_traits.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_uninitialized.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_vector.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_bvector.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/vector.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/list \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_list.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/list.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/algorithm \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/utility \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_relops.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_algo.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/cstdlib \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/algorithmfwd.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_heap.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_tempbuf.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/hash_map \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/backward/backward_warning.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/backward/hashtable.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/iterator \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ostream \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ios \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/ios_base.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/locale_classes.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/locale_classes.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/streambuf \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/streambuf.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/basic_ios.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/locale_facets.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/cwctype \
+  /usr/include/wctype.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/ctype_base.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/streambuf_iterator.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/ctype_inline.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/locale_facets.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/basic_ios.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/ostream.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/istream \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/istream.tcc \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stream_iterator.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/backward/hash_fun.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/hash_set \
+  Options.h ld.hpp /usr/include/math.h \
+  /usr/include/x86_64-linux-gnu/bits/huge_val.h \
+  /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
+  /usr/include/x86_64-linux-gnu/bits/huge_vall.h \
+  /usr/include/x86_64-linux-gnu/bits/inf.h \
+  /usr/include/x86_64-linux-gnu/bits/nan.h \
+  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h /usr/include/assert.h \
+  ../../../ld64/src/configure.h \
+  /usr/include/x86_64-linux-gnu/sys/param.h /usr/include/signal.h \
+  /usr/include/x86_64-linux-gnu/bits/signum.h \
+  /usr/include/x86_64-linux-gnu/bits/siginfo.h \
+  /usr/include/x86_64-linux-gnu/bits/sigaction.h \
+  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
+  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
+  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
+  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
+  /usr/include/x86_64-linux-gnu/bits/param.h /usr/include/linux/param.h \
+  /usr/include/x86_64-linux-gnu/asm/param.h \
+  /usr/include/asm-generic/param.h /usr/include/libio.h \
+  /usr/include/_G_config.h \
+  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
+  ../../../ld64/src/3rd/strlcat.h ../../../ld64/src/3rd/strlcpy.h \
+  ../../../ld64/src/3rd/helper.h \
+  /usr/include/x86_64-linux-gnu/sys/time.h Snapshot.h InputFiles.h \
+  SymbolTable.h Resolver.h parsers/lto_file.h
+
+/usr/include/stdlib.h:
+
+/usr/include/features.h:
+
+/usr/include/stdc-predef.h:
+
+/usr/include/x86_64-linux-gnu/bits/predefs.h:
+
+/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/clang/3.2/include/stddef.h:
+
+/usr/include/x86_64-linux-gnu/bits/waitflags.h:
+
+/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
+
+/usr/include/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap.h:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap-16.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/x86_64-linux-gnu/sys/types.h:
+
+/usr/include/time.h:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigset.h:
+
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/x86_64-linux-gnu/sys/sysmacros.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+/usr/include/x86_64-linux-gnu/sys/stat.h:
+
+/usr/include/x86_64-linux-gnu/bits/stat.h:
+
+/usr/include/x86_64-linux-gnu/sys/mman.h:
+
+/usr/include/x86_64-linux-gnu/bits/mman.h:
+
+/usr/include/x86_64-linux-gnu/sys/sysctl.h:
+
+/usr/include/linux/sysctl.h:
+
+/usr/include/linux/kernel.h:
+
+/usr/include/linux/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/sysctl.h:
+
+/usr/include/fcntl.h:
+
+/usr/include/x86_64-linux-gnu/bits/fcntl.h:
+
+/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h:
+
+/usr/include/x86_64-linux-gnu/bits/uio.h:
+
+/usr/include/errno.h:
+
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
+/usr/include/linux/errno.h:
+
+/usr/include/x86_64-linux-gnu/asm/errno.h:
+
+/usr/include/asm-generic/errno.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/clang/3.2/include/limits.h:
+
+/usr/include/limits.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/xopen_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/unistd.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
+/usr/include/x86_64-linux-gnu/bits/environments.h:
+
+/usr/include/x86_64-linux-gnu/bits/confname.h:
+
+/usr/include/getopt.h:
+
+../../../include/foreign/mach/mach_time.h:
+
+../../../include/foreign/mach/mach_types.h:
+
+/usr/include/clang/3.2/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+../../../include/foreign/mach/host_info.h:
+
+../../../include/foreign/mach/message.h:
+
+../../../include/foreign/mach/port.h:
+
+../../../include/foreign/mach/boolean.h:
+
+../../../include/foreign/mach/machine/boolean.h:
+
+../../../include/foreign/mach/i386/boolean.h:
+
+../../../include/foreign/mach/machine/vm_types.h:
+
+../../../include/foreign/mach/i386/vm_types.h:
+
+../../../include/foreign/i386/_types.h:
+
+../../../include/foreign/mach/i386/vm_param.h:
+
+../../../include/foreign/mach/kern_return.h:
+
+../../../include/foreign/mach/machine/kern_return.h:
+
+../../../include/foreign/mach/i386/kern_return.h:
+
+../../../include/foreign/mach/vm_statistics.h:
+
+../../../include/mach/machine.h:
+
+../../../include/foreign/mach/time_value.h:
+
+../../../include/foreign/mach/host_notify.h:
+
+../../../include/foreign/mach/host_special_ports.h:
+
+../../../include/foreign/mach/memory_object_types.h:
+
+../../../include/foreign/mach/vm_prot.h:
+
+../../../include/foreign/mach/vm_sync.h:
+
+../../../include/foreign/mach/vm_types.h:
+
+../../../include/foreign/mach/exception_types.h:
+
+../../../include/foreign/mach/machine/exception.h:
+
+../../../include/foreign/mach/i386/exception.h:
+
+../../../include/foreign/mach/thread_status.h:
+
+../../../include/foreign/mach/machine/thread_status.h:
+
+../../../include/foreign/mach/i386/thread_status.h:
+
+../../../include/foreign/mach/i386/_structs.h:
+
+../../../include/foreign/mach/i386/fp_reg.h:
+
+../../../include/foreign/mach/i386/thread_state.h:
+
+../../../include/foreign/i386/eflags.h:
+
+../../../include/foreign/mach/machine/thread_state.h:
+
+../../../include/foreign/mach/processor_info.h:
+
+../../../include/foreign/mach/machine/processor_info.h:
+
+../../../include/foreign/mach/i386/processor_info.h:
+
+../../../include/foreign/mach/task_info.h:
+
+../../../include/foreign/mach/policy.h:
+
+../../../include/foreign/mach/task_policy.h:
+
+../../../include/foreign/mach/task_special_ports.h:
+
+../../../include/foreign/mach/thread_info.h:
+
+../../../include/foreign/mach/thread_policy.h:
+
+../../../include/foreign/mach/thread_special_ports.h:
+
+../../../include/foreign/mach/clock_types.h:
+
+../../../include/foreign/mach/vm_attributes.h:
+
+../../../include/foreign/mach/vm_inherit.h:
+
+../../../include/foreign/mach/vm_purgable.h:
+
+../../../include/foreign/mach/vm_behavior.h:
+
+../../../include/foreign/mach/vm_region.h:
+
+../../../include/foreign/mach/machine/vm_param.h:
+
+../../../include/foreign/mach/kmod.h:
+
+../../../include/foreign/mach/std_types.h:
+
+../../../include/foreign/mach/mach_init.h:
+
+/usr/include/clang/3.2/include/stdarg.h:
+
+../../../include/foreign/mach/mach_traps.h:
+
+../../../include/foreign/machine/endian.h:
+
+../../../include/foreign/i386/endian.h:
+
+../../../include/foreign/mach/mach_host.h:
+
+/usr/include/string.h:
+
+../../../include/foreign/mach/ndr.h:
+
+../../../include/foreign/libkern/OSByteOrder.h:
+
+../../../include/foreign/libkern/_OSByteOrder.h:
+
+../../../include/foreign/sys/_types.h:
+
+../../../include/foreign/machine/_types.h:
+
+../../../include/foreign/libkern/i386/_OSByteOrder.h:
+
+../../../include/foreign/libkern/i386/OSByteOrder.h:
+
+../../../include/foreign/mach/notify.h:
+
+../../../include/foreign/mach/mig_errors.h:
+
+../../../include/foreign/mach/mig.h:
+
+../../../include/foreign/mach_debug/mach_debug_types.h:
+
+../../../include/foreign/mach_debug/ipc_info.h:
+
+../../../include/foreign/mach_debug/vm_info.h:
+
+../../../include/foreign/mach_debug/zone_info.h:
+
+../../../include/foreign/mach_debug/page_info.h:
+
+../../../include/foreign/mach_debug/hash_info.h:
+
+../../../include/foreign/mach_debug/lockgroup_info.h:
+
+/usr/include/dlfcn.h:
+
+/usr/include/x86_64-linux-gnu/bits/dlfcn.h:
+
+../../../include/mach-o/dyld.h:
+
+../../../include/mach-o/loader.h:
+
+../../../include/foreign/architecture/byte_order.h:
+
+../../../include/foreign/AvailabilityMacros.h:
+
+../../../include/mach-o/fat.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/string:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/c++config.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/cpu_defines.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stringfwd.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/memoryfwd.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/char_traits.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_algobase.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/functexcept.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/exception_defines.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/cpp_type_traits.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/type_traits.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/numeric_traits.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_pair.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/move.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/concept_check.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_iterator_base_types.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_iterator_base_funcs.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/debug/debug.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_iterator.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/postypes.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/cwchar:
+
+/usr/include/wchar.h:
+
+/usr/include/stdio.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/allocator.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/c++allocator.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/new_allocator.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/new:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/exception:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/atomic_lockfree_defines.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/localefwd.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/c++locale.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/clocale:
+
+/usr/include/locale.h:
+
+/usr/include/x86_64-linux-gnu/bits/locale.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/iosfwd:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/cctype:
+
+/usr/include/ctype.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/ostream_insert.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/cxxabi_forced.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_function.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/backward/binders.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/range_access.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/basic_string.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/atomicity.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/gthr.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/gthr-default.h:
+
+/usr/include/pthread.h:
+
+/usr/include/sched.h:
+
+/usr/include/x86_64-linux-gnu/bits/sched.h:
+
+/usr/include/x86_64-linux-gnu/bits/timex.h:
+
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/atomic_word.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/basic_string.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/map:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_tree.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_map.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_multimap.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/set:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_set.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_multiset.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/vector:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_construct.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/alloc_traits.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_uninitialized.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_vector.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_bvector.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/vector.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/list:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_list.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/list.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/algorithm:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/utility:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_relops.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_algo.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/cstdlib:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/algorithmfwd.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_heap.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stl_tempbuf.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/hash_map:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/backward/backward_warning.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/backward/hashtable.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/iterator:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ostream:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ios:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/ios_base.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/locale_classes.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/locale_classes.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/streambuf:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/streambuf.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/basic_ios.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/locale_facets.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/cwctype:
+
+/usr/include/wctype.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/ctype_base.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/streambuf_iterator.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/x86_64-linux-gnu/c++/4.8/bits/ctype_inline.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/locale_facets.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/basic_ios.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/ostream.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/istream:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/istream.tcc:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/bits/stream_iterator.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/backward/hash_fun.h:
+
+/usr/bin/../lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c++/4.8/ext/hash_set:
+
+Options.h:
+
+ld.hpp:
+
+/usr/include/math.h:
+
+/usr/include/x86_64-linux-gnu/bits/huge_val.h:
+
+/usr/include/x86_64-linux-gnu/bits/huge_valf.h:
+
+/usr/include/x86_64-linux-gnu/bits/huge_vall.h:
+
+/usr/include/x86_64-linux-gnu/bits/inf.h:
+
+/usr/include/x86_64-linux-gnu/bits/nan.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathdef.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
+
+/usr/include/assert.h:
+
+../../../ld64/src/configure.h:
+
+/usr/include/x86_64-linux-gnu/sys/param.h:
+
+/usr/include/signal.h:
+
+/usr/include/x86_64-linux-gnu/bits/signum.h:
+
+/usr/include/x86_64-linux-gnu/bits/siginfo.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigaction.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigstack.h:
+
+/usr/include/x86_64-linux-gnu/sys/ucontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+/usr/include/x86_64-linux-gnu/bits/param.h:
+
+/usr/include/linux/param.h:
+
+/usr/include/x86_64-linux-gnu/asm/param.h:
+
+/usr/include/asm-generic/param.h:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
+
+../../../ld64/src/3rd/strlcat.h:
+
+../../../ld64/src/3rd/strlcpy.h:
+
+../../../ld64/src/3rd/helper.h:
+
+/usr/include/x86_64-linux-gnu/sys/time.h:
+
+Snapshot.h:
+
+InputFiles.h:
+
+SymbolTable.h:
+
+Resolver.h:
+
+parsers/lto_file.h:

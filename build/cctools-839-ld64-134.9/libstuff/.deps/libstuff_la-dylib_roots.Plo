@@ -1,0 +1,562 @@
+libstuff_la-dylib_roots.lo: dylib_roots.c /usr/include/stdlib.h \
+  /usr/include/features.h /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/predefs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/clang/3.2/include/stddef.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap-16.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/time.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/sigset.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/alloca.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h /usr/include/stdio.h \
+  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
+  /usr/include/clang/3.2/include/stdarg.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
+  /usr/include/strings.h /usr/include/xlocale.h /usr/include/unistd.h \
+  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+  /usr/include/x86_64-linux-gnu/bits/environments.h \
+  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
+  /usr/include/x86_64-linux-gnu/sys/stat.h \
+  /usr/include/x86_64-linux-gnu/bits/stat.h \
+  /usr/include/x86_64-linux-gnu/sys/param.h \
+  /usr/include/clang/3.2/include/limits.h /usr/include/limits.h \
+  /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+  /usr/include/linux/limits.h \
+  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h /usr/include/signal.h \
+  /usr/include/x86_64-linux-gnu/bits/signum.h \
+  /usr/include/x86_64-linux-gnu/bits/siginfo.h \
+  /usr/include/x86_64-linux-gnu/bits/sigaction.h \
+  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
+  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
+  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
+  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
+  /usr/include/x86_64-linux-gnu/bits/param.h /usr/include/linux/param.h \
+  /usr/include/x86_64-linux-gnu/asm/param.h \
+  /usr/include/asm-generic/param.h /usr/include/fts.h \
+  /usr/include/x86_64-linux-gnu/sys/errno.h /usr/include/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+  ../include/stuff/bool.h ../include/stuff/SymLoc.h \
+  ../include/stuff/ofile.h ../include/foreign/ar.h \
+  ../include/mach-o/loader.h /usr/include/clang/3.2/include/stdint.h \
+  /usr/include/stdint.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  ../include/mach/machine.h ../include/foreign/mach/machine/vm_types.h \
+  ../include/foreign/mach/i386/vm_types.h \
+  ../include/foreign/i386/_types.h \
+  ../include/foreign/mach/i386/vm_param.h \
+  ../include/foreign/mach/boolean.h \
+  ../include/foreign/mach/machine/boolean.h \
+  ../include/foreign/mach/i386/boolean.h \
+  ../include/foreign/mach/vm_prot.h \
+  ../include/foreign/mach/machine/thread_status.h \
+  ../include/foreign/mach/i386/thread_status.h \
+  ../include/foreign/mach/i386/_structs.h \
+  ../include/foreign/mach/message.h ../include/foreign/mach/port.h \
+  ../include/foreign/mach/kern_return.h \
+  ../include/foreign/mach/machine/kern_return.h \
+  ../include/foreign/mach/i386/kern_return.h \
+  ../include/foreign/mach/i386/fp_reg.h \
+  ../include/foreign/mach/i386/thread_state.h \
+  ../include/foreign/i386/eflags.h \
+  ../include/foreign/architecture/byte_order.h \
+  ../include/foreign/libkern/OSByteOrder.h \
+  ../include/foreign/libkern/_OSByteOrder.h \
+  ../include/foreign/sys/_types.h ../include/foreign/machine/_types.h \
+  ../include/foreign/libkern/i386/_OSByteOrder.h \
+  ../include/foreign/libkern/i386/OSByteOrder.h \
+  ../include/stuff/bytesex.h ../include/mach-o/fat.h \
+  ../include/mach/m68k/thread_status.h \
+  ../include/mach/ppc/thread_status.h ../include/mach/ppc/_structs.h \
+  ../include/mach/m88k/thread_status.h \
+  ../include/architecture/m88k/fp_regs.h \
+  ../include/architecture/m88k/reg_help.h \
+  ../include/architecture/nrw/reg_help.h \
+  ../include/mach/i860/thread_status.h \
+  ../include/mach/hppa/thread_status.h \
+  ../include/mach/sparc/thread_status.h \
+  ../include/architecture/sparc/reg.h \
+  ../include/mach/arm/thread_status.h ../include/mach/arm/_structs.h \
+  ../include/mach/arm/thread_state.h ../include/mach-o/nlist.h \
+  ../include/mach-o/reloc.h ../include/mach-o/ranlib.h \
+  ../include/stuff/arch.h ../include/stuff/errors.h \
+  ../include/foreign/mach/mach.h ../include/foreign/mach/std_types.h \
+  ../include/foreign/mach/vm_types.h \
+  ../include/foreign/mach/mach_types.h \
+  ../include/foreign/mach/host_info.h \
+  ../include/foreign/mach/vm_statistics.h \
+  ../include/foreign/mach/time_value.h \
+  ../include/foreign/mach/host_notify.h \
+  ../include/foreign/mach/host_special_ports.h \
+  ../include/foreign/mach/memory_object_types.h \
+  ../include/foreign/mach/vm_sync.h \
+  ../include/foreign/mach/exception_types.h \
+  ../include/foreign/mach/machine/exception.h \
+  ../include/foreign/mach/i386/exception.h \
+  ../include/foreign/mach/thread_status.h \
+  ../include/foreign/mach/machine/thread_state.h \
+  ../include/foreign/mach/processor_info.h \
+  ../include/foreign/mach/machine/processor_info.h \
+  ../include/foreign/mach/i386/processor_info.h \
+  ../include/foreign/mach/task_info.h ../include/foreign/mach/policy.h \
+  ../include/foreign/mach/task_policy.h \
+  ../include/foreign/mach/task_special_ports.h \
+  ../include/foreign/mach/thread_info.h \
+  ../include/foreign/mach/thread_policy.h \
+  ../include/foreign/mach/thread_special_ports.h \
+  ../include/foreign/mach/clock_types.h \
+  ../include/foreign/mach/vm_attributes.h \
+  ../include/foreign/mach/vm_inherit.h \
+  ../include/foreign/mach/vm_purgable.h \
+  ../include/foreign/mach/vm_behavior.h \
+  ../include/foreign/mach/vm_region.h \
+  ../include/foreign/mach/machine/vm_param.h \
+  ../include/foreign/mach/kmod.h \
+  ../include/foreign/mach/mach_interface.h \
+  ../include/foreign/mach/clock_priv.h /usr/include/string.h \
+  ../include/foreign/mach/ndr.h ../include/foreign/mach/notify.h \
+  ../include/foreign/mach/mig_errors.h ../include/foreign/mach/mig.h \
+  ../include/foreign/mach/host_priv.h \
+  ../include/foreign/mach_debug/mach_debug_types.h \
+  ../include/foreign/mach_debug/ipc_info.h \
+  ../include/foreign/mach_debug/vm_info.h \
+  ../include/foreign/mach_debug/zone_info.h \
+  ../include/foreign/mach_debug/page_info.h \
+  ../include/foreign/mach_debug/hash_info.h \
+  ../include/foreign/mach_debug/lockgroup_info.h \
+  ../include/foreign/mach/host_security.h \
+  ../include/foreign/mach/ledger.h ../include/foreign/mach/lock_set.h \
+  ../include/foreign/mach/processor.h \
+  ../include/foreign/mach/processor_set.h \
+  ../include/foreign/mach/semaphore.h \
+  ../include/foreign/mach/sync_policy.h ../include/foreign/mach/task.h \
+  ../include/foreign/mach/x86_64/task.h \
+  ../include/foreign/mach/thread_act.h \
+  ../include/foreign/mach/x86_64/thread_act.h \
+  ../include/foreign/mach/vm_map.h ../include/foreign/mach/mach_port.h \
+  ../include/foreign/mach/mach_init.h \
+  ../include/foreign/mach/mach_traps.h \
+  ../include/foreign/machine/endian.h ../include/foreign/i386/endian.h \
+  ../include/foreign/mach/mach_host.h \
+  ../include/foreign/mach/thread_switch.h ../include/foreign/mach/rpc.h \
+  ../include/foreign/mach/machine/rpc.h \
+  ../include/foreign/mach/i386/rpc.h \
+  ../include/foreign/mach/mach_error.h ../include/foreign/mach/error.h \
+  ../include/stuff/allocate.h ../include/stuff/dylib_roots.h
+
+/usr/include/stdlib.h:
+
+/usr/include/features.h:
+
+/usr/include/stdc-predef.h:
+
+/usr/include/x86_64-linux-gnu/bits/predefs.h:
+
+/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/clang/3.2/include/stddef.h:
+
+/usr/include/x86_64-linux-gnu/bits/waitflags.h:
+
+/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
+
+/usr/include/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/endian.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap.h:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/x86_64-linux-gnu/bits/byteswap-16.h:
+
+/usr/include/x86_64-linux-gnu/sys/types.h:
+
+/usr/include/time.h:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigset.h:
+
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/x86_64-linux-gnu/sys/sysmacros.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+/usr/include/stdio.h:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/wchar.h:
+
+/usr/include/clang/3.2/include/stdarg.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
+
+/usr/include/strings.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/unistd.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
+/usr/include/x86_64-linux-gnu/bits/environments.h:
+
+/usr/include/x86_64-linux-gnu/bits/confname.h:
+
+/usr/include/getopt.h:
+
+/usr/include/x86_64-linux-gnu/sys/stat.h:
+
+/usr/include/x86_64-linux-gnu/bits/stat.h:
+
+/usr/include/x86_64-linux-gnu/sys/param.h:
+
+/usr/include/clang/3.2/include/limits.h:
+
+/usr/include/limits.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+/usr/include/signal.h:
+
+/usr/include/x86_64-linux-gnu/bits/signum.h:
+
+/usr/include/x86_64-linux-gnu/bits/siginfo.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigaction.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigstack.h:
+
+/usr/include/x86_64-linux-gnu/sys/ucontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+/usr/include/x86_64-linux-gnu/bits/param.h:
+
+/usr/include/linux/param.h:
+
+/usr/include/x86_64-linux-gnu/asm/param.h:
+
+/usr/include/asm-generic/param.h:
+
+/usr/include/fts.h:
+
+/usr/include/x86_64-linux-gnu/sys/errno.h:
+
+/usr/include/errno.h:
+
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
+/usr/include/linux/errno.h:
+
+/usr/include/x86_64-linux-gnu/asm/errno.h:
+
+/usr/include/asm-generic/errno.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+../include/stuff/bool.h:
+
+../include/stuff/SymLoc.h:
+
+../include/stuff/ofile.h:
+
+../include/foreign/ar.h:
+
+../include/mach-o/loader.h:
+
+/usr/include/clang/3.2/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+../include/mach/machine.h:
+
+../include/foreign/mach/machine/vm_types.h:
+
+../include/foreign/mach/i386/vm_types.h:
+
+../include/foreign/i386/_types.h:
+
+../include/foreign/mach/i386/vm_param.h:
+
+../include/foreign/mach/boolean.h:
+
+../include/foreign/mach/machine/boolean.h:
+
+../include/foreign/mach/i386/boolean.h:
+
+../include/foreign/mach/vm_prot.h:
+
+../include/foreign/mach/machine/thread_status.h:
+
+../include/foreign/mach/i386/thread_status.h:
+
+../include/foreign/mach/i386/_structs.h:
+
+../include/foreign/mach/message.h:
+
+../include/foreign/mach/port.h:
+
+../include/foreign/mach/kern_return.h:
+
+../include/foreign/mach/machine/kern_return.h:
+
+../include/foreign/mach/i386/kern_return.h:
+
+../include/foreign/mach/i386/fp_reg.h:
+
+../include/foreign/mach/i386/thread_state.h:
+
+../include/foreign/i386/eflags.h:
+
+../include/foreign/architecture/byte_order.h:
+
+../include/foreign/libkern/OSByteOrder.h:
+
+../include/foreign/libkern/_OSByteOrder.h:
+
+../include/foreign/sys/_types.h:
+
+../include/foreign/machine/_types.h:
+
+../include/foreign/libkern/i386/_OSByteOrder.h:
+
+../include/foreign/libkern/i386/OSByteOrder.h:
+
+../include/stuff/bytesex.h:
+
+../include/mach-o/fat.h:
+
+../include/mach/m68k/thread_status.h:
+
+../include/mach/ppc/thread_status.h:
+
+../include/mach/ppc/_structs.h:
+
+../include/mach/m88k/thread_status.h:
+
+../include/architecture/m88k/fp_regs.h:
+
+../include/architecture/m88k/reg_help.h:
+
+../include/architecture/nrw/reg_help.h:
+
+../include/mach/i860/thread_status.h:
+
+../include/mach/hppa/thread_status.h:
+
+../include/mach/sparc/thread_status.h:
+
+../include/architecture/sparc/reg.h:
+
+../include/mach/arm/thread_status.h:
+
+../include/mach/arm/_structs.h:
+
+../include/mach/arm/thread_state.h:
+
+../include/mach-o/nlist.h:
+
+../include/mach-o/reloc.h:
+
+../include/mach-o/ranlib.h:
+
+../include/stuff/arch.h:
+
+../include/stuff/errors.h:
+
+../include/foreign/mach/mach.h:
+
+../include/foreign/mach/std_types.h:
+
+../include/foreign/mach/vm_types.h:
+
+../include/foreign/mach/mach_types.h:
+
+../include/foreign/mach/host_info.h:
+
+../include/foreign/mach/vm_statistics.h:
+
+../include/foreign/mach/time_value.h:
+
+../include/foreign/mach/host_notify.h:
+
+../include/foreign/mach/host_special_ports.h:
+
+../include/foreign/mach/memory_object_types.h:
+
+../include/foreign/mach/vm_sync.h:
+
+../include/foreign/mach/exception_types.h:
+
+../include/foreign/mach/machine/exception.h:
+
+../include/foreign/mach/i386/exception.h:
+
+../include/foreign/mach/thread_status.h:
+
+../include/foreign/mach/machine/thread_state.h:
+
+../include/foreign/mach/processor_info.h:
+
+../include/foreign/mach/machine/processor_info.h:
+
+../include/foreign/mach/i386/processor_info.h:
+
+../include/foreign/mach/task_info.h:
+
+../include/foreign/mach/policy.h:
+
+../include/foreign/mach/task_policy.h:
+
+../include/foreign/mach/task_special_ports.h:
+
+../include/foreign/mach/thread_info.h:
+
+../include/foreign/mach/thread_policy.h:
+
+../include/foreign/mach/thread_special_ports.h:
+
+../include/foreign/mach/clock_types.h:
+
+../include/foreign/mach/vm_attributes.h:
+
+../include/foreign/mach/vm_inherit.h:
+
+../include/foreign/mach/vm_purgable.h:
+
+../include/foreign/mach/vm_behavior.h:
+
+../include/foreign/mach/vm_region.h:
+
+../include/foreign/mach/machine/vm_param.h:
+
+../include/foreign/mach/kmod.h:
+
+../include/foreign/mach/mach_interface.h:
+
+../include/foreign/mach/clock_priv.h:
+
+/usr/include/string.h:
+
+../include/foreign/mach/ndr.h:
+
+../include/foreign/mach/notify.h:
+
+../include/foreign/mach/mig_errors.h:
+
+../include/foreign/mach/mig.h:
+
+../include/foreign/mach/host_priv.h:
+
+../include/foreign/mach_debug/mach_debug_types.h:
+
+../include/foreign/mach_debug/ipc_info.h:
+
+../include/foreign/mach_debug/vm_info.h:
+
+../include/foreign/mach_debug/zone_info.h:
+
+../include/foreign/mach_debug/page_info.h:
+
+../include/foreign/mach_debug/hash_info.h:
+
+../include/foreign/mach_debug/lockgroup_info.h:
+
+../include/foreign/mach/host_security.h:
+
+../include/foreign/mach/ledger.h:
+
+../include/foreign/mach/lock_set.h:
+
+../include/foreign/mach/processor.h:
+
+../include/foreign/mach/processor_set.h:
+
+../include/foreign/mach/semaphore.h:
+
+../include/foreign/mach/sync_policy.h:
+
+../include/foreign/mach/task.h:
+
+../include/foreign/mach/x86_64/task.h:
+
+../include/foreign/mach/thread_act.h:
+
+../include/foreign/mach/x86_64/thread_act.h:
+
+../include/foreign/mach/vm_map.h:
+
+../include/foreign/mach/mach_port.h:
+
+../include/foreign/mach/mach_init.h:
+
+../include/foreign/mach/mach_traps.h:
+
+../include/foreign/machine/endian.h:
+
+../include/foreign/i386/endian.h:
+
+../include/foreign/mach/mach_host.h:
+
+../include/foreign/mach/thread_switch.h:
+
+../include/foreign/mach/rpc.h:
+
+../include/foreign/mach/machine/rpc.h:
+
+../include/foreign/mach/i386/rpc.h:
+
+../include/foreign/mach/mach_error.h:
+
+../include/foreign/mach/error.h:
+
+../include/stuff/allocate.h:
+
+../include/stuff/dylib_roots.h:
