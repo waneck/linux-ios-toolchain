@@ -96,7 +96,6 @@ AC_OUTPUT([
 	   plutil/Makefile
 	   createProject/Makefile
 	   createProject/templates/Makefile
-	   genLocalization2/Makefile
 	   pngcrush/Makefile
 	   xcbuild/Makefile
 ])

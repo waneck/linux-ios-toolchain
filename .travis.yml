@@ -21,9 +21,9 @@ matrix:
 install:
   - sudo apt-get install -y clang 
   - sudo apt-get install -y gcc g++ libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev bison flex libsqlite3-dev libtool llvm-dev libxml2-dev
+  - clang -v
 
 script:
   - ./configure arm-apple-darwin 
-  - make
   - sudo make install
   - arm-apple-darwin-ld -v
