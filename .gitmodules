@@ -1,0 +1,3 @@
+[submodule "build/cctools"]
+	path = build/cctools
+	url = https://github.com/tpoechtrager/cctools-port.git

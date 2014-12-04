@@ -1,1 +1,0 @@
-x86_64_as-hex-value.o: ../hex-value.c

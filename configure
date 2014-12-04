@@ -1,28 +1,33 @@
 #!/bin/bash
 
 TARGET=$1
-ALL=cctools
-INSTALL=cctools-install
+ALL=cctools.stamp
+INSTALL=cctools-install.stamp
 
 if [ -z "$TARGET" ]; then
 	PS3="Please select the desired target: "
-	options=("arm-apple-darwin11" "x86_64-apple-darwin11" "i686-apple-darwin11")
+	options=("arm-apple-darwin" "x86_64-apple-darwin" "i686-apple-darwin")
 	select opt in "${options[@]}"
-  do
-    case $opt in
-      "" )
-        echo $opt;;
-      "arm-apple-darwin11" )
-        TARGET=$opt
-        ALL="$ALL ios-tools"
-        INSTALL="$INSTALL ios-tools-install"
-        break;;
-      *)
-        TARGET=$opt
-        break;;
-    esac
-  done
+	do
+		case $opt in
+			"" )
+				echo $opt;;
+			*)
+				TARGET=$opt
+				break;;
+		esac
+	done
 fi
+
+case "$TARGET" in
+	arm-apple-darwin* )
+		TARGET=$TARGET
+		ALL="$ALL ios-tools.stamp"
+		INSTALL="$INSTALL ios-tools-install.stamp"
+		;;
+	*)
+		;;
+esac
 
 echo "Configuring for $TARGET ..."
 echo "TARGET=\"$TARGET\"" > configure.mk

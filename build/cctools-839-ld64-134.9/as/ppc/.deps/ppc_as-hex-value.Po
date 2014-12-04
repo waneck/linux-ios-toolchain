@@ -1,1 +1,0 @@
-ppc_as-hex-value.o: ../hex-value.c

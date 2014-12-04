@@ -1,0 +1,28 @@
+language: cpp
+
+matrix:
+  include:
+    - env:
+      - TEST_NAME="clang stable"
+      before_install:
+        - sudo apt-get install -y clang
+    - env:
+      - TEST_NAME="clang bleeding"
+      before_install:
+        - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -y  -
+        - sudo apt-get update
+        - sudo apt-get install -y clang-3.5
+
+env:
+  - CXX=clang++
+    CC=clang
+
+install:
+  - sudo apt-get install -y clang 
+  - sudo apt-get install -y gcc g++ libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev bison flex libsqlite3-dev libtool llvm-dev libxml2-dev
+
+script:
+  - ./configure arm-apple-darwin 
+  - make
+  - sudo make install
+  - arm-apple-darwin-ld -v

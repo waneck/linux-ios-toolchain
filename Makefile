@@ -1,41 +1,46 @@
 include configure.mk
 
 PREFIX=/usr
-LLVM_INCLUDE=/usr/include/llvm-c-3.2
 
-CCTOOLS=build/cctools-839-ld64-134.9
+CCTOOLS=build/cctools/cctools
 IOSTOOLS=build/iphonesdk-utils-2.0
 
 no-configure:
 	echo "Please run ./configure before running make"
 
 # Assembler and linker
-cctools:
+cctools.stamp:
 	cd ${CCTOOLS} && \
 		./autogen.sh; \
-		CFLAGS="-I${LLVM_INCLUDE}" CXXFLAGS="-I${LLVM_INCLUDE}" ./configure --target=${TARGET} --prefix=${PREFIX} && \
+		./configure --target=${TARGET} --prefix=${PREFIX} && \
 		make
+	touch $@
 
-cctools-install: cctools
+cctools-install.stamp: cctools.stamp
 	make install -C ${CCTOOLS}
+	touch $@
 
 cctools-clean:
 	make clean -C ${CCTOOLS}
+	rm -f cctools.stamp
 
 # Utilities
-ios-tools:
+ios-tools.stamp:
 	cd ${IOSTOOLS} && \
-		./autogen.sh ; \
-		./configure --prefix=${PREFIX} && \
-		make
+			./autogen.sh ; \
+			./configure --prefix=${PREFIX} && \
+			make
+	touch $@
 
-ios-tools-install: ios-tools
+ios-tools-install.stamp: ios-tools.stamp
 	make install -C ${IOSTOOLS}
+	touch $@
 
 ios-tools-clean:
 	make clean -C ${IOSTOOLS}
+	rm -f ios-tools.stamp
 
 
 clean: cctools-clean ios-tools-clean
 
-.PHONY: cctools cctools-clean cctools-install all install no-configure ios-tools ios-tools-install ios-tools-clean clean
+.PHONY: clean ios-tools-clean cctools-clean
