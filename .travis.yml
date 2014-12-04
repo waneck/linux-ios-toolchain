@@ -1,29 +1,28 @@
 language: cpp
 
-compiler:
-  clang
-
 matrix:
   include:
-    - env:
-      - TEST_NAME="clang stable"
+    - env: TEST_NAME="clang stable"
       before_install:
         - sudo apt-get install -y clang
-    - env:
-      - TEST_NAME="clang bleeding"
-      before_install:
-        - sudo add-apt-repository -y ppa:xorg-edgers/ppa 
-        - sudo apt-get update
-        - sudo apt-get install -y clang-3.5
-        - export CXX=clang-3.5++
-        - export CC=clang-3.5
+        - export CC=clang
+        - export CXX=clang++
+    # - env: TEST_NAME="clang bleeding"
+    #   before_install:
+    #     - sudo add-apt-repository -y ppa:xorg-edgers/ppa 
+    #     - sudo apt-get update
+    #     - sudo apt-get install -y clang-3.5
+    #     - export CC=clang-3.5
+    #     - export CXX=clang++-3.5
+    #     - export CPP=clang++-3.5
 
 install:
-  - sudo apt-get install -y clang 
-  - sudo apt-get install -y gcc g++ libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev bison flex libsqlite3-dev libtool llvm-dev libxml2-dev
-  - clang -v
+  - sudo apt-get install -y gcc g++ libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev bison flex libsqlite3-dev libtool llvm-dev libxml2-dev automake pkg-config
 
 script:
+  - echo $CC
+  - $CC -v
   - ./configure arm-apple-darwin 
+  - make
   - sudo make install
   - arm-apple-darwin-ld -v

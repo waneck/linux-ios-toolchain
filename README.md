@@ -1,5 +1,7 @@
 *This project is a fork of [ios-toolchain-based-on-clang](http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/). All the credits go to the original authors! If you like this, support the original project/authors and tell them how awesome they are!*
 
+[![Build Status](https://travis-ci.org/waneck/linux-ios-toolchain.svg?branch=master)](https://travis-ci.org/waneck/linux-ios-toolchain)
+
 ## What
 Mac and iOs toolchain for linux. By providing a compiler, assembler, linker, debugger and some utilities, you will be able to cross compile applications to an iPhone and to a Mac directly from a Linux box.
 
