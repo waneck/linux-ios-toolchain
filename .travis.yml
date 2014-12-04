@@ -12,9 +12,11 @@ matrix:
     - env:
       - TEST_NAME="clang bleeding"
       before_install:
-        - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -y  -
+        - sudo add-apt-repository -y ppa:xorg-edgers/ppa 
         - sudo apt-get update
         - sudo apt-get install -y clang-3.5
+        - export CXX=clang-3.5++
+        - export CC=clang-3.5
 
 install:
   - sudo apt-get install -y clang 
