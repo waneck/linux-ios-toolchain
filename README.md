@@ -20,7 +20,7 @@ Yes. `:D`
 An effort is being made to make the project compilation as painless as possible. If you're on Ubuntu 13.10, you should be able to compile running the following commands:
 
 ```bash
-sudo apt-get install gcc g++ clang libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev bison flex libsqlite3-dev libtool llvm-dev libxml2-dev
+sudo apt-get install gcc g++ clang libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev bison flex libsqlite3-dev libtool llvm-dev libxml2-dev automake pkg-config
 make
 sudo make install
 ```
