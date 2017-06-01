@@ -26,6 +26,7 @@ An effort is being made to make the project compilation as painless as possible.
 git clone --recursive https://github.com/waneck/linux-ios-toolchain.git
 cd linux-ios-toolchain
 sudo apt-get install gcc g++ clang libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev bison flex libsqlite3-dev libtool llvm-dev libxml2-dev automake pkg-config
+./configure
 make
 sudo make install
 ```
