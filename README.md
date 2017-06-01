@@ -1,3 +1,6 @@
+# Deprecated
+If you are interested in a mac/iOs toolchain for linux, please check out [cctools-port](https://github.com/tpoechtrager/cctools-port/), which is being actively developed and supported
+
 *This project is a fork of [ios-toolchain-based-on-clang](http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/). All the credits go to the original authors! If you like this, support the original project/authors and tell them how awesome they are!*
 
 [![Build Status](https://travis-ci.org/waneck/linux-ios-toolchain.svg?branch=master)](https://travis-ci.org/waneck/linux-ios-toolchain)
